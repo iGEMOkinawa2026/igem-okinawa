@@ -22,6 +22,7 @@ This repository hosts the public website for iGEM Okinawa. It is designed to be 
 2. **CSS Variables Only**: Do not use ad-hoc colors or custom utility frameworks. Use approved CSS variables in `global.css`.
 3. **Pages CMS Sync**: Any schema change in `src/content/config.ts` must be reflected in `.pages.yml`.
 4. **Localization Parity**: Maintain folder/file parity between English pages (`src/pages/*`) and Japanese pages (`src/pages/ja/*`).
+5. **Git Workflow & Branching**: Never commit directly to `main` for AI coding work. Always branch from the latest `origin/main` and use Pull Requests, following the instructions in `docs/ai/tasks.md`.
 
 ## Required Reading by Task Type
 Depending on the task type, you must read the corresponding instructions before proceeding:

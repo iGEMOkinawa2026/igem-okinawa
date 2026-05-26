@@ -4,6 +4,35 @@ This document provides checklists for common tasks, debugging processes, content
 
 ---
 
+## Git Workflow & Branching Rules
+
+To prevent conflicts with direct Pages CMS edits, all AI coding work must follow this branching strategy.
+
+### Rules
+1. **CMS Edits Bypass**: Pages CMS edits may directly update `main`.
+2. **No Direct Main Edits**: AI coding work must never be done directly on the `main` branch.
+3. **PR Strategy**: Use Pull Requests for review and merge. Never force-push to `main`.
+
+### Feature Branch Setup Checklist
+Before starting any coding work, run the following:
+- [ ] `git fetch origin`
+- [ ] `git checkout main`
+- [ ] `git pull --rebase origin main`
+- [ ] `git checkout -b <type>/<short-task-name>`
+
+#### Branch Naming Guidelines
+- `docs/<task>`
+- `fix/<task>`
+- `feat/<task>`
+- `chore/<task>`
+
+### Pre-PR Checklist
+Before opening a Pull Request, run:
+- [ ] `npm run build`
+- [ ] `git status`
+
+---
+
 ## Recommended Next Tasks
 
 - **[ ] Fix Schema Inconsistency**:
