@@ -6,3 +6,5 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://igemokinawa2026.github.io/igem-okinawa/sitemap.xml
