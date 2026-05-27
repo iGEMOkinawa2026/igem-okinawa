@@ -4,9 +4,9 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import { withBase } from '../../lib/paths';
 
-const newsEntries = (await getCollection('news')).sort(
-  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
-);
+const newsEntries = (await getCollection('news'))
+  .filter((post) => post.data.language === 'en' && post.data.published)
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 ---
 
 <PageLayout
@@ -27,21 +27,22 @@ const newsEntries = (await getCollection('news')).sort(
           <article class="card news-card">
             {post.data.image ? (
               <div class="card-image">
-                <a href={withBase(`news/${post.slug}/`)}>
+                <a href={withBase(`news/${post.data.slug}/`)}>
                   <img src={withBase(post.data.image)} alt={post.data.title} loading="lazy" />
                 </a>
               </div>
             ) : (
               <div class="card-img-placeholder">
-                <a href={withBase(`news/${post.slug}/`)} style="color: inherit; text-decoration: none;">
+                <a href={withBase(`news/${post.data.slug}/`)} style="color: inherit; text-decoration: none;">
                   [ News Image ]
                 </a>
               </div>
             )}
             <div class="card-content">
               <p class="news-date">{post.data.date}</p>
-              <h3><a href={withBase(`news/${post.slug}/`)}>{post.data.title}</a></h3>
-              {post.data.summary && <p class="news-summary">{post.data.summary}</p>}
+              {post.data.category && <p class="news-category">{post.data.category}</p>}
+              <h3><a href={withBase(`news/${post.data.slug}/`)}>{post.data.title}</a></h3>
+              <p class="news-summary">{post.data.description}</p>
               {post.data.tags && post.data.tags.length > 0 && (
                 <div class="news-tags">
                   {post.data.tags.map(tag => <span class="tag">{tag}</span>)}
@@ -86,6 +87,13 @@ const newsEntries = (await getCollection('news')).sort(
     font-weight: 600;
     color: var(--color-secondary);
     margin-bottom: 0.5rem;
+  }
+  .news-category {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-highlight);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
   }
   .news-card h3 {
     margin-bottom: 0.5rem;

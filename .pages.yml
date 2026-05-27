@@ -145,6 +145,128 @@ content:
         type: number
         required: false
 
+  - name: news-en
+    label: News Articles (English)
+    type: collection
+    path: src/content/news/en
+    format: yaml-frontmatter
+    filename: "{slug}.md"
+    view:
+      primary: title
+      sort:
+        - date
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Article title
+        type: string
+        required: true
+      - name: date
+        label: Publication date
+        type: date
+        required: true
+      - name: description
+        label: Short description
+        type: text
+        required: true
+      - name: language
+        label: Language
+        type: select
+        required: true
+        options:
+          values:
+            - name: en
+              label: English
+      - name: published
+        label: Published
+        type: boolean
+        required: true
+        default: true
+      - name: slug
+        label: URL slug
+        type: string
+        required: true
+      - name: category
+        label: Category
+        type: string
+        required: false
+      - name: image
+        label: Featured image
+        type: image
+        required: false
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+        required: false
+      - name: body
+        label: Article body
+        type: rich-text
+        required: false
+
+  - name: news-ja
+    label: News Articles (Japanese)
+    type: collection
+    path: src/content/news/ja
+    format: yaml-frontmatter
+    filename: "{slug}.md"
+    view:
+      primary: title
+      sort:
+        - date
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: 記事タイトル
+        type: string
+        required: true
+      - name: date
+        label: 公開日
+        type: date
+        required: true
+      - name: description
+        label: 短い説明
+        type: text
+        required: true
+      - name: language
+        label: 言語
+        type: select
+        required: true
+        options:
+          values:
+            - name: ja
+              label: Japanese
+      - name: published
+        label: 公開する
+        type: boolean
+        required: true
+        default: true
+      - name: slug
+        label: URLスラッグ
+        type: string
+        required: true
+      - name: category
+        label: カテゴリー
+        type: string
+        required: false
+      - name: image
+        label: アイキャッチ画像
+        type: image
+        required: false
+      - name: tags
+        label: タグ
+        type: string
+        list: true
+        required: false
+      - name: body
+        label: 本文
+        type: rich-text
+        required: false
+
   - name: human-practice
     label: Human Practice Sections
     type: collection

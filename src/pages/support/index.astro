@@ -11,6 +11,7 @@ import { withBase } from '../../lib/paths';
 const sponsors = (await getCollection('sponsors')).sort(
   (a, b) => a.data.order - b.data.order,
 );
+const donationPdfPath = withBase('assets/donation/igem-okinawa-fundraising-guide.pdf');
 ---
 
 <PageLayout
@@ -50,20 +51,37 @@ const sponsors = (await getCollection('sponsors')).sort(
   <section class="section text-center">
     <div class="container">
       <h2>Make a Donation</h2>
-      <p style="margin-bottom: 2rem;">We accept donations via Bank Transfer and Credit Card.</p>
+      <p class="donation-lede">Donations are accepted through the official OIST donation form. Please use the donation guide below for details, and include iGEM Okinawa in the relevant message or designation field when applicable.</p>
       
-      <div class="payment-methods" style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap;">
-        <div class="payment-method-card" style="padding: 1.5rem; background: var(--color-bg-alt); border-radius: var(--border-radius-md); flex: 1; min-width: 250px;">
-          <h4>🏦 Bank Transfer</h4>
+      <div class="payment-methods">
+        <div class="payment-method-card">
+          <h4>Bank Transfer</h4>
           <p>You can donate directly to our official bank account.</p>
         </div>
-        <div class="payment-method-card" style="padding: 1.5rem; background: var(--color-bg-alt); border-radius: var(--border-radius-md); flex: 1; min-width: 250px;">
-          <h4>💳 Credit Card</h4>
+        <div class="payment-method-card">
+          <h4>Credit Card</h4>
           <p>We process credit card donations securely via OIST forms.</p>
         </div>
       </div>
 
-      <a href="https://forms.oist.jp/form/donate-now" target="_blank" rel="noopener noreferrer" class="btn btn-highlight btn-large">Donate Now</a>
+      <div class="donation-actions">
+        <a href="https://forms.oist.jp/form/donate-now" target="_blank" rel="noopener noreferrer" class="btn btn-highlight btn-large">Donate via OIST</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2>Donation Guide</h2>
+        <p class="subtitle">View the fundraising guide directly on this page.</p>
+      </div>
+      <object class="donation-pdf-viewer" data={donationPdfPath} type="application/pdf">
+        <iframe class="donation-pdf-viewer" src={donationPdfPath} title="iGEM Okinawa fundraising guide PDF"></iframe>
+      </object>
+      <p class="pdf-fallback">
+        If the PDF does not appear, <a href={donationPdfPath}>open the donation guide PDF</a>.
+      </p>
     </div>
   </section>
 
@@ -104,5 +122,40 @@ const sponsors = (await getCollection('sponsors')).sort(
   }
   .info-card li {
     margin-bottom: 0.5rem;
+  }
+  .donation-lede {
+    max-width: 760px;
+    margin: 0 auto 2rem;
+  }
+  .payment-methods {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .payment-method-card {
+    padding: 1.5rem;
+    background: var(--color-bg-alt);
+    border-radius: var(--border-radius-md);
+    flex: 1;
+    min-width: min(250px, 100%);
+  }
+  .donation-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .donation-pdf-viewer {
+    width: 100%;
+    min-height: 70vh;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: var(--border-radius-md);
+    background: var(--color-bg-base);
+  }
+  .pdf-fallback {
+    margin-top: 1rem;
+    text-align: center;
   }
 </style>

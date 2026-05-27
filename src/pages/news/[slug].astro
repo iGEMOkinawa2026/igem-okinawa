@@ -6,10 +6,12 @@ import { withBase } from '../../lib/paths';
 
 export async function getStaticPaths() {
   const newsEntries = await getCollection('news');
-  return newsEntries.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+  return newsEntries
+    .filter((post) => post.data.language === 'en' && post.data.published)
+    .map((post) => ({
+      params: { slug: post.data.slug },
+      props: { post },
+    }));
 }
 
 const { post } = Astro.props;
@@ -18,7 +20,7 @@ const { Content } = await post.render();
 
 <PageLayout
   title={`${post.data.title} | News`}
-  description={post.data.summary || post.data.title}
+  description={post.data.description}
   locale="en"
 >
   <PageHero
@@ -34,7 +36,9 @@ const { Content } = await post.render();
     <div class="container news-content-container" style="max-width: 800px; margin: 0 auto;">
       <header class="news-header" style="text-align: center; margin-bottom: 3rem;">
         <p class="news-date" style="color: var(--color-secondary); font-weight: 600; margin-bottom: 1rem;">{post.data.date}</p>
+        {post.data.category && <p style="color: var(--color-highlight); font-weight: 700; text-transform: uppercase; margin-bottom: 1rem;">{post.data.category}</p>}
         <h1 style="color: var(--color-primary); font-size: clamp(2rem, 1.5rem + 2vw, 3rem); margin-bottom: 1rem;">{post.data.title}</h1>
+        <p style="font-size: 1.125rem; color: var(--color-text-main);">{post.data.description}</p>
         {post.data.tags && post.data.tags.length > 0 && (
           <div class="news-tags" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
             {post.data.tags.map(tag => <span class="tag" style="font-size: 0.8rem; background: var(--color-bg-alt); padding: 0.25rem 0.75rem; border-radius: 999px;">{tag}</span>)}
