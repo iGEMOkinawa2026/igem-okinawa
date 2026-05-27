@@ -6,7 +6,6 @@ language: en
 published: true
 slug: science-week-fundraising-guide
 category: Support
-image:
 tags:
   - Donation
   - Support

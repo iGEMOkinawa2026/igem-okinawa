@@ -9,7 +9,7 @@ export async function getStaticPaths() {
   return newsEntries
     .filter((post) => post.data.language === 'ja' && post.data.published)
     .map((post) => ({
-      params: { slug: post.data.slug },
+      params: { slug: post.slug },
       props: { post },
     }));
 }
