@@ -47,13 +47,14 @@ const news = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
-    date: z.string(),
+    date: z.union([z.string(), z.date()]).transform((value) =>
+      value instanceof Date ? value.toISOString().slice(0, 10) : value,
+    ),
     description: z.string(),
     language: z.enum(['en', 'ja']),
     published: z.boolean().default(false),
-    slug: z.string(),
     category: z.string().optional(),
-    image: z.string().optional(),
+    image: z.string().nullable().optional(),
     tags: z.array(z.string()).optional(),
   }),
 });
