@@ -2,11 +2,10 @@
 import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import { getPublishedNewsByLanguage } from '../../lib/news';
 import { withBase } from '../../lib/paths';
 
-const newsEntries = (await getCollection('news'))
-  .filter((post) => post.data.language === 'en' && post.data.published)
-  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const newsEntries = getPublishedNewsByLanguage(await getCollection('news'), 'en');
 ---
 
 <PageLayout
