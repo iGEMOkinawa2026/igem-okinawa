@@ -11,7 +11,7 @@ import { withBase } from '../../../lib/paths';
 const sponsors = (await getCollection('sponsors')).sort(
   (a, b) => a.data.order - b.data.order,
 );
-const donationPdfPath = withBase('assets/donation/igem-okinawa-fundraising-guide.pdf');
+const donationPdfPath = withBase('assets/donation/igem-okinawa-fundrasing-guide-ja.pdf');
 ---
 
 <PageLayout
