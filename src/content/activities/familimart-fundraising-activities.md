@@ -1,5 +1,5 @@
 ---
-title: FamiliMart Fundraising activities
+title: FamilyMart Fundraising activities
 description: We have partnered with FamilyMart to place donation boxes in
   selected stores to support our project. This fundraising activity generated
   9,346 yen + 2 Euro in donations to support our project.
