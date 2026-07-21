@@ -185,10 +185,13 @@ content:
         type: boolean
         required: true
         default: true
+      # slug はファイル名（= URL）を決めるために使う。
+      # 注意: URL は最終的にファイル名から導出される（src/lib/news.ts の getNewsSlug）。
+      # EN と JA は別フォルダ（news/en, news/ja）なので、同じ slug を使っても衝突・上書きは起きない。
       - name: slug
         label: URL slug
         type: string
-        required: true
+        required: false
         pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
       - name: category
         label: Category
@@ -250,10 +253,13 @@ content:
         type: boolean
         required: true
         default: true
+      # slug はファイル名（= URL）を決めるために使う。
+      # 注意: URL は最終的にファイル名から導出される（src/lib/news.ts の getNewsSlug）。
+      # 英語版と日本語版は別フォルダ（news/en, news/ja）なので、同じ slug でも衝突しない。
       - name: slug
         label: URLスラッグ
         type: string
-        required: true
+        required: false
         pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
       - name: category
         label: カテゴリー

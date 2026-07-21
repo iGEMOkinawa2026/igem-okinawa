@@ -2,13 +2,13 @@
 import { getCollection } from 'astro:content';
 import PageLayout from '../../../layouts/PageLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
-import { getPublishedNewsByLanguage } from '../../../lib/news';
+import { getPublishedNewsByLanguage, getNewsSlug } from '../../../lib/news';
 import { withBase } from '../../../lib/paths';
 
 export async function getStaticPaths() {
   return getPublishedNewsByLanguage(await getCollection('news'), 'ja')
     .map((post) => ({
-      params: { slug: post.slug },
+      params: { slug: getNewsSlug(post) },
       props: { post },
     }));
 }
