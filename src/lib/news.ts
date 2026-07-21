@@ -8,6 +8,15 @@ export function getNewsLanguage(post: NewsEntry): NewsLanguage {
   return post.id.startsWith('ja/') ? 'ja' : 'en';
 }
 
+/**
+ * URL に使う slug をファイルパス（post.id）から導出する。
+ * 例: "en/science-week-fundraising-guide.md" -> "science-week-fundraising-guide"
+ * frontmatter の slug には依存しない（EN/JA で重複しても衝突しないようにするため）。
+ */
+export function getNewsSlug(post: NewsEntry): string {
+  return post.id.replace(/^(en|ja)\//, '').replace(/\.md$/, '');
+}
+
 export function getPublishedNewsByLanguage(posts: NewsEntry[], language: NewsLanguage) {
   return posts
     .filter((post) => getNewsLanguage(post) === language && post.data.published)

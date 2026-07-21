@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import PageHero from '../../components/PageHero.astro';
-import { getPublishedNewsByLanguage } from '../../lib/news';
+import { getPublishedNewsByLanguage, getNewsSlug } from '../../lib/news';
 import { withBase } from '../../lib/paths';
 
 const newsEntries = getPublishedNewsByLanguage(await getCollection('news'), 'en');
@@ -22,17 +22,19 @@ const newsEntries = getPublishedNewsByLanguage(await getCollection('news'), 'en'
   <section class="section section-alt">
     <div class="container">
       <div class="news-grid">
-        {newsEntries.map((post) => (
+        {newsEntries.map((post) => {
+          const slug = getNewsSlug(post);
+          return (
           <article class="card news-card">
             {post.data.image ? (
               <div class="card-image">
-                <a href={withBase(`news/${post.slug}/`)}>
+                <a href={withBase(`news/${slug}/`)}>
                   <img src={withBase(post.data.image)} alt={post.data.title} loading="lazy" />
                 </a>
               </div>
             ) : (
               <div class="card-img-placeholder">
-                <a href={withBase(`news/${post.slug}/`)} style="color: inherit; text-decoration: none;">
+                <a href={withBase(`news/${slug}/`)} style="color: inherit; text-decoration: none;">
                   [ News Image ]
                 </a>
               </div>
@@ -40,7 +42,7 @@ const newsEntries = getPublishedNewsByLanguage(await getCollection('news'), 'en'
             <div class="card-content">
               <p class="news-date">{post.data.date}</p>
               {post.data.category && <p class="news-category">{post.data.category}</p>}
-              <h3><a href={withBase(`news/${post.slug}/`)}>{post.data.title}</a></h3>
+              <h3><a href={withBase(`news/${slug}/`)}>{post.data.title}</a></h3>
               <p class="news-summary">{post.data.description}</p>
               {post.data.tags && post.data.tags.length > 0 && (
                 <div class="news-tags">
@@ -49,7 +51,8 @@ const newsEntries = getPublishedNewsByLanguage(await getCollection('news'), 'en'
               )}
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
     </div>
   </section>
