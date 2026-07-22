@@ -1,0 +1,82 @@
+---
+/**
+ * Site Policy (JA)
+ * 著作権・免責事項・リンク方針・禁止事項。
+ * 文面はチーム/PMの法的確認が前提。
+ */
+import PageLayout from '../../../layouts/PageLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { withBase } from '../../../lib/paths';
+
+const contactEmail = 'igemokinawa2026@gmail.com';
+const lastUpdated = '2026年7月21日';
+---
+
+<PageLayout
+  title="Site Policy | iGEM Okinawa"
+  description="iGEM Okinawa ウェブサイトのご利用条件について。"
+  locale="ja"
+>
+  <PageHero
+    title="Site Policy"
+    subtitle="本ウェブサイトのご利用条件について。"
+    breadcrumbs={[{ label: 'ホーム', href: withBase('ja/') }]}
+  />
+
+  <section class="section">
+    <div class="container" style="max-width: 760px;">
+      <div class="prose">
+        <p><em>最終更新日：{lastUpdated}</em></p>
+
+        <p>
+          本サイトポリシーは、iGEM Okinawa 2026 チーム（以下「私たち」）が運営する本ウェブサイト
+          （以下「本サイト」）のご利用条件を定めるものです。本サイトをご利用いただくことで、
+          本ポリシーに同意したものとみなします。
+        </p>
+
+        <h2>著作権</h2>
+        <p>
+          特に記載のない限り、本サイトに掲載されているコンテンツ（文章、画像、ロゴ、デザイン等）は
+          iGEM Okinawa または各制作者に帰属し、著作権法その他の法令によって保護されています。
+          事前の許可なく、これらのコンテンツを複製・再配布したり、商用目的で利用したりすることは
+          できません。なお、一部のコンテンツ（チームメンバー、スポンサー、オープンソース素材などに
+          よるもの）は各権利者に帰属します。
+        </p>
+
+        <h2>免責事項</h2>
+        <p>
+          私たちは、本サイトに掲載する情報の正確性および最新性の維持に努めています。ただし、本サイトは
+          現状有姿（"as is"）で提供され、いかなる保証も行いません。本サイトまたはその内容の利用、
+          あるいは利用できなかったことに起因して生じたいかなる損害についても、私たちは責任を負いません。
+        </p>
+
+        <h2>リンク</h2>
+        <p>
+          本サイトには、第三者が運営する外部ウェブサイトへのリンクが含まれる場合があります。それらの
+          サイトの内容や利用可否について、私たちは責任を負いません。本サイトへのリンクは原則として
+          自由ですが、誤解を招く形での掲載や、iGEM Okinawa の信用を損なうような掲載はご遠慮ください。
+        </p>
+
+        <h2>禁止事項</h2>
+        <p>本サイトのご利用にあたり、以下の行為を行わないものとします。</p>
+        <ul>
+          <li>適用される法令に違反して本サイトを利用すること</li>
+          <li>iGEM Okinawa または第三者の知的財産権その他の権利を侵害すること</li>
+          <li>本サイトの運営やセキュリティを妨害・阻害すること</li>
+        </ul>
+
+        <h2>本ポリシーの変更</h2>
+        <p>
+          本サイトポリシーは、必要に応じて改定することがあります。変更があった場合は、更新日を記載の
+          うえ本ページに掲載します。
+        </p>
+
+        <h2>お問い合わせ</h2>
+        <p>
+          本サイトポリシーに関するお問い合わせは、
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a> までご連絡ください。
+        </p>
+      </div>
+    </div>
+  </section>
+</PageLayout>
