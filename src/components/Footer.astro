@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../lib/paths';
+
 interface FooterLink {
   label: string;
   href: string;
@@ -102,8 +104,8 @@ const {
   <div class="footer-bottom container">
     <p>{copyrightLine}</p>
     <div class="footer-meta-links">
-      <a href={privacyHref}>{privacyLabel}</a>
-      <a href={termsHref}>{termsLabel}</a>
+      <a href={withBase(privacyHref)}>{privacyLabel}</a>
+      <a href={withBase(termsHref)}>{termsLabel}</a>
     </div>
   </div>
 </footer>

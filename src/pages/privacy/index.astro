@@ -1,0 +1,104 @@
+---
+/**
+ * Privacy Policy (EN)
+ * Reflects the site's actual data practices: no analytics, no cookies set by
+ * this site, contact is email-only. Third parties: Google Fonts, GitHub Pages,
+ * Google Search Console. Wording pending team/PM legal review.
+ */
+import PageLayout from '../../layouts/PageLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { withBase } from '../../lib/paths';
+
+const contactEmail = 'igemokinawa2026@gmail.com';
+const lastUpdated = 'July 21, 2026';
+---
+
+<PageLayout
+  title="Privacy Policy | iGEM Okinawa"
+  description="How iGEM Okinawa handles information collected through this website."
+  locale="en"
+>
+  <PageHero
+    title="Privacy Policy"
+    subtitle="How we handle information collected through this website."
+    breadcrumbs={[{ label: 'Home', href: withBase('') }]}
+  />
+
+  <section class="section">
+    <div class="container" style="max-width: 760px;">
+      <div class="prose">
+        <p><em>Last updated: {lastUpdated}</em></p>
+
+        <p>
+          This Privacy Policy explains how the iGEM Okinawa 2026 team ("we", "our", "us") — a
+          student-led team representing Okinawa in the international iGEM competition — handles
+          information in connection with this website (the "Site").
+        </p>
+
+        <h2>Information We Collect</h2>
+        <p>
+          This Site is a static informational website. We do not use analytics services and we do
+          not set cookies of our own. We do not operate any contact form or account system on the
+          Site, so browsing the Site does not require you to provide any personal information.
+        </p>
+        <p>
+          If you choose to contact us by email or through the social media accounts linked on the
+          Site, we will receive the information you send us — such as your name, email address, and
+          the contents of your message.
+        </p>
+
+        <h2>How We Use Information</h2>
+        <p>
+          We use the information you send us solely to respond to your inquiry and to communicate
+          with you about it. We do not sell your personal information, and we do not share it with
+          third parties except as needed to respond to you or where required by law.
+        </p>
+
+        <h2>Third-Party Services</h2>
+        <p>
+          The Site relies on the following third-party services, which may automatically receive
+          certain technical information (such as your IP address, browser type, and access times)
+          when you visit:
+        </p>
+        <ul>
+          <li>
+            <strong>GitHub Pages</strong> — hosts the Site and may record standard server access
+            logs.
+          </li>
+          <li>
+            <strong>Google Fonts</strong> — fonts are loaded from Google's servers, which may
+            receive your IP address in order to deliver them.
+          </li>
+          <li>
+            <strong>Google Search Console</strong> — used to monitor the Site's presence in search
+            results.
+          </li>
+        </ul>
+        <p>
+          These services are operated by third parties under their own privacy policies. We
+          recommend reviewing the privacy policies of Google and GitHub for details on how they
+          handle data.
+        </p>
+
+        <h2>External Links</h2>
+        <p>
+          The Site contains links to external websites operated by others. This Privacy Policy does
+          not apply to those sites, and we are not responsible for their content or privacy
+          practices.
+        </p>
+
+        <h2>Changes to This Policy</h2>
+        <p>
+          We may update this Privacy Policy from time to time. Any changes will be posted on this
+          page with an updated date.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          If you have any questions about this Privacy Policy, please contact us at
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</PageLayout>

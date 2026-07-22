@@ -1,0 +1,101 @@
+---
+/**
+ * Privacy Policy (JA)
+ * 実態に基づく: 解析なし・独自Cookieなし・問い合わせはメール/SNSのみ。
+ * 第三者: Google Fonts, GitHub Pages, Google Search Console。
+ * 文面はチーム/PMの法的確認が前提。
+ */
+import PageLayout from '../../../layouts/PageLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { withBase } from '../../../lib/paths';
+
+const contactEmail = 'igemokinawa2026@gmail.com';
+const lastUpdated = '2026年7月21日';
+---
+
+<PageLayout
+  title="Privacy Policy | iGEM Okinawa"
+  description="iGEM Okinawa が本ウェブサイトを通じて取得する情報の取り扱いについて。"
+  locale="ja"
+>
+  <PageHero
+    title="Privacy Policy"
+    subtitle="本ウェブサイトを通じて取得する情報の取り扱いについて。"
+    breadcrumbs={[{ label: 'ホーム', href: withBase('ja/') }]}
+  />
+
+  <section class="section">
+    <div class="container" style="max-width: 760px;">
+      <div class="prose">
+        <p><em>最終更新日：{lastUpdated}</em></p>
+
+        <p>
+          本プライバシーポリシーは、国際大会 iGEM に沖縄から参加する学生チーム
+          「iGEM Okinawa 2026」（以下「私たち」）が、本ウェブサイト（以下「本サイト」）に関連して
+          情報をどのように取り扱うかを説明するものです。
+        </p>
+
+        <h2>取得する情報</h2>
+        <p>
+          本サイトは静的な情報提供サイトです。私たちはアクセス解析サービスを利用しておらず、
+          独自のCookieも設定していません。本サイト上に問い合わせフォームやアカウント機能はないため、
+          本サイトの閲覧にあたって個人情報をご提供いただく必要はありません。
+        </p>
+        <p>
+          メール、または本サイトに掲載されたSNSアカウントを通じて私たちにご連絡いただいた場合、
+          お名前・メールアドレス・メッセージの内容など、お送りいただいた情報を受け取ります。
+        </p>
+
+        <h2>情報の利用目的</h2>
+        <p>
+          お送りいただいた情報は、お問い合わせへの対応およびそれに関する連絡のためにのみ利用します。
+          個人情報を販売することはなく、お問い合わせ対応に必要な場合や法令で求められる場合を除き、
+          第三者に提供することはありません。
+        </p>
+
+        <h2>第三者サービス</h2>
+        <p>
+          本サイトは以下の第三者サービスを利用しており、これらのサービスは、あなたが本サイトを訪問した際に
+          技術的な情報（IPアドレス、ブラウザの種類、アクセス日時など）を自動的に取得する場合があります。
+        </p>
+        <ul>
+          <li>
+            <strong>GitHub Pages</strong> — 本サイトのホスティングに利用し、標準的なサーバーの
+            アクセスログが記録される場合があります。
+          </li>
+          <li>
+            <strong>Google Fonts</strong> — フォントはGoogleのサーバーから読み込まれ、その配信のために
+            GoogleがあなたのIPアドレスを受け取る場合があります。
+          </li>
+          <li>
+            <strong>Google Search Console</strong> — 本サイトの検索結果での表示状況を把握するために
+            利用しています。
+          </li>
+        </ul>
+        <p>
+          これらのサービスは各社独自のプライバシーポリシーに基づき運営されています。データの取り扱いの
+          詳細については、GoogleおよびGitHubのプライバシーポリシーをご確認ください。
+        </p>
+
+        <h2>外部リンク</h2>
+        <p>
+          本サイトには、他者が運営する外部ウェブサイトへのリンクが含まれます。本プライバシーポリシーは
+          それらのサイトには適用されず、私たちはそれらの内容やプライバシーの取り扱いについて責任を
+          負いません。
+        </p>
+
+        <h2>本ポリシーの変更</h2>
+        <p>
+          本プライバシーポリシーは、必要に応じて改定することがあります。変更があった場合は、更新日を
+          記載のうえ本ページに掲載します。
+        </p>
+
+        <h2>お問い合わせ</h2>
+        <p>
+          本プライバシーポリシーに関するお問い合わせは、
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a> までご連絡ください。
+        </p>
+      </div>
+    </div>
+  </section>
+</PageLayout>

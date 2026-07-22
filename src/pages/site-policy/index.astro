@@ -1,0 +1,85 @@
+---
+/**
+ * Site Policy (EN)
+ * Copyright, disclaimer, links policy, prohibited uses.
+ * Wording pending team/PM legal review.
+ */
+import PageLayout from '../../layouts/PageLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { withBase } from '../../lib/paths';
+
+const contactEmail = 'igemokinawa2026@gmail.com';
+const lastUpdated = 'July 21, 2026';
+---
+
+<PageLayout
+  title="Site Policy | iGEM Okinawa"
+  description="Terms and conditions for using the iGEM Okinawa website."
+  locale="en"
+>
+  <PageHero
+    title="Site Policy"
+    subtitle="Terms and conditions for using this website."
+    breadcrumbs={[{ label: 'Home', href: withBase('') }]}
+  />
+
+  <section class="section">
+    <div class="container" style="max-width: 760px;">
+      <div class="prose">
+        <p><em>Last updated: {lastUpdated}</em></p>
+
+        <p>
+          This Site Policy sets out the terms for using this website (the "Site"), which is operated
+          by the iGEM Okinawa 2026 team ("we", "our", "us"). By using the Site, you agree to this
+          policy.
+        </p>
+
+        <h2>Copyright</h2>
+        <p>
+          Unless otherwise noted, the content on this Site — including text, images, logos, and
+          design — belongs to iGEM Okinawa or its respective contributors and is protected by
+          copyright and other laws. You may not reproduce, redistribute, or use this content for
+          commercial purposes without our prior permission. Some content may be provided by third
+          parties (for example team members, sponsors, or open-source assets) and remains the
+          property of its respective owners.
+        </p>
+
+        <h2>Disclaimer</h2>
+        <p>
+          We make reasonable efforts to keep the information on this Site accurate and up to date.
+          However, the Site is provided "as is" without warranties of any kind. We are not liable
+          for any loss or damage arising from the use of, or inability to use, the Site or its
+          content.
+        </p>
+
+        <h2>Links</h2>
+        <p>
+          The Site may contain links to external websites operated by third parties. We are not
+          responsible for the content or availability of those sites. You are generally welcome to
+          link to this Site; however, we ask that links not be presented in a way that is
+          misleading or that damages the reputation of iGEM Okinawa.
+        </p>
+
+        <h2>Prohibited Uses</h2>
+        <p>When using the Site, you agree not to:</p>
+        <ul>
+          <li>use the Site in violation of any applicable law or regulation;</li>
+          <li>infringe the intellectual property or other rights of iGEM Okinawa or third parties;</li>
+          <li>interfere with or disrupt the operation or security of the Site.</li>
+        </ul>
+
+        <h2>Changes to This Policy</h2>
+        <p>
+          We may update this Site Policy from time to time. Any changes will be posted on this page
+          with an updated date.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          If you have any questions about this Site Policy, please contact us at
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</PageLayout>
