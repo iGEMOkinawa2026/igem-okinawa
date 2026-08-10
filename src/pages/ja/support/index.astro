@@ -99,10 +99,10 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
       )}
 
       <div class="payment-methods">
-        {hasBankTransfer && bankTransfer && (
-          <div class="payment-method-card payment-method-card-primary">
-            <p class="payment-method-eyebrow">Primary</p>
-            <h4>銀行振込</h4>
+        <div class="payment-method-card payment-method-card-primary">
+          <p class="payment-method-eyebrow">Primary</p>
+          <h4>銀行振込</h4>
+          {hasBankTransfer && bankTransfer ? (
             <dl class="bank-details">
               <div><dt>銀行名</dt><dd>{bankTransfer.bank_name}</dd></div>
               <div><dt>支店名</dt><dd>{bankTransfer.branch_name}</dd></div>
@@ -110,17 +110,20 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
               <div><dt>口座番号</dt><dd><code>{bankTransfer.account_number}</code></dd></div>
               <div><dt>口座名義</dt><dd>{bankTransfer.account_holder}</dd></div>
             </dl>
-            {bankTransfer.note && <p>{bankTransfer.note}</p>}
-          </div>
-        )}
-        {oistDonation && (
-          <div class="payment-method-card payment-method-card-secondary">
-            <p class="payment-method-eyebrow">Secondary</p>
-            <h4>OIST Donation</h4>
-            {oistDonation.note && <p>{oistDonation.note}</p>}
+          ) : (
+            <p class="payment-status">口座情報などの詳細は準備中です。</p>
+          )}
+          {hasBankTransfer && bankTransfer?.note && <p>{bankTransfer.note}</p>}
+        </div>
+        <div class="payment-method-card payment-method-card-secondary">
+          <p class="payment-method-eyebrow">Secondary</p>
+          <h4>OIST Donation</h4>
+          {oistDonation?.note && <p>{oistDonation.note}</p>}
+          {!oistDonation && <p class="payment-status">寄付フォームなどの詳細は準備中です。</p>}
+          {oistDonation && (
             <a href={oistDonation.url} target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-large">OIST寄付フォームへ</a>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {oistDonation && (
@@ -129,9 +132,6 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
         </div>
       )}
 
-      {!hasBankTransfer && !oistDonation && detailLinks.length === 0 && (
-        <p class="donation-empty">寄付に関する情報は準備中です。</p>
-      )}
       {donation.last_updated && (
         <p class="donation-updated">最終更新日: {donation.last_updated}</p>
       )}
@@ -285,6 +285,9 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
   }
   .donation-empty {
     margin: 2rem 0;
+    color: var(--color-text-muted);
+  }
+  .payment-status {
     color: var(--color-text-muted);
   }
   .donation-actions {
