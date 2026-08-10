@@ -80,5 +80,16 @@ npm run dev
 npm run build
 ```
 
+### PR Preview
+
+Pull requests from this repository generate a review URL under
+`/igem-okinawa/pr-preview/pr-<number>/`. The URL is shared in the pull request
+comment and is removed when the pull request is closed. This is an unlisted
+preview URL, not password-protected access.
+
+For the preview workflow to serve correctly, configure the repository's GitHub
+Pages publishing source to the `gh-pages` branch (root directory). Keep the
+production deployment restricted to `main`.
+
 ### Pages CMS Config
 The `.pages.yml` file configures the CMS. If you add new fields to Astro content schemas (`src/content/config.ts`), you MUST update `.pages.yml` so that content editors can access those fields.

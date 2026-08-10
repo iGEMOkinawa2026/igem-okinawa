@@ -1,1 +1,35 @@
 current_year: 2026
+
+donation:
+  goal_amount: 0
+  current_amount: 0
+  currency: JPY
+  last_updated: ''
+  ja:
+    title: ''
+    description: ''
+    funding_plan_url: ''
+    returns_url: ''
+    updates_url: ''
+    bank_transfer:
+      enabled: false
+      bank_name: ''
+      branch_name: ''
+      account_type: ''
+      account_number: ''
+      account_holder: ''
+      note: ''
+    oist:
+      enabled: false
+      url: ''
+      note: ''
+  en:
+    title: ''
+    description: ''
+    funding_plan_url: ''
+    returns_url: ''
+    updates_url: ''
+    oist:
+      enabled: false
+      url: ''
+      note: ''
