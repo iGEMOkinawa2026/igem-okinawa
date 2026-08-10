@@ -12,13 +12,14 @@ interface Props {
 
 const { title, description, lang = 'en', canonicalUrl } = Astro.props;
 const siteOrigin = 'https://igemokinawa2026.github.io';
-const basePath = '/igem-okinawa/';
+const basePath = import.meta.env.BASE_URL;
 const homeUrl = `${siteOrigin}${basePath}`;
 const normalizedPath = Astro.url.pathname.startsWith(basePath)
   ? Astro.url.pathname
   : `${basePath}${Astro.url.pathname.replace(/^\//, '')}`;
 const currentUrl = canonicalUrl ?? new URL(normalizedPath, siteOrigin).toString();
 const ogImageUrl = `${homeUrl}og-image.png`;
+const isPreview = import.meta.env.PUBLIC_PREVIEW === 'true';
 const social = YAML.parse(socialRaw) as {
   links?: { platform: string; url: string; shortLabel?: string }[];
 };
@@ -42,6 +43,7 @@ const organizationSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {isPreview && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={currentUrl} />
     <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL}logo.png`} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

@@ -7,11 +7,36 @@ import PageLayout from '../../../layouts/PageLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
 import Support from '../../../components/Support.astro';
 import { withBase } from '../../../lib/paths';
+import { getSettings } from '../../../lib/settings';
 
 const sponsors = (await getCollection('sponsors')).sort(
   (a, b) => a.data.order - b.data.order,
 );
 const donationPdfPath = withBase('assets/donation/igem-okinawa-fundrasing-guide-ja.pdf');
+const donation = getSettings().donation;
+const donationLocale = donation.ja;
+const progress = donation.goal_amount > 0
+  ? Math.min(100, Math.max(0, (donation.current_amount / donation.goal_amount) * 100))
+  : 0;
+const formatAmount = (amount: number) =>
+  new Intl.NumberFormat('ja-JP', { style: 'currency', currency: donation.currency }).format(amount);
+const detailLinks = [
+  { label: '資金の使い道', href: donationLocale.funding_plan_url },
+  { label: 'お礼・返礼', href: donationLocale.returns_url },
+  { label: '活動・進捗報告', href: donationLocale.updates_url },
+].filter((link) => link.href);
+const bankTransfer = donationLocale.bank_transfer;
+const hasBankTransfer = Boolean(
+  bankTransfer?.enabled &&
+  bankTransfer.bank_name &&
+  bankTransfer.branch_name &&
+  bankTransfer.account_type &&
+  bankTransfer.account_number &&
+  bankTransfer.account_holder,
+);
+const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
+  ? donationLocale.oist
+  : null;
 ---
 
 <PageLayout
@@ -49,26 +74,68 @@ const donationPdfPath = withBase('assets/donation/igem-okinawa-fundrasing-guide-
     </div>
   </section>
 
-  <section class="section text-center">
+  <section class="section text-center donation-section">
     <div class="container">
-      <h2>寄付によるご支援</h2>
-      <p class="donation-lede">ご寄付はOISTの公式寄付フォームからお申し込みいただけます。詳細は下記の寄付案内PDFをご確認ください。該当する入力欄がある場合は、iGEM Okinawaへのご支援であることをご記入ください。</p>
-      
-      <div class="payment-methods">
-        <div class="payment-method-card">
-          <h4>銀行振込（Bank Transfer）</h4>
-          <p>iGEM Okinawaの公式口座へ直接お振り込みいただけます。</p>
+      <h2>{donationLocale.title || '寄付によるご支援'}</h2>
+      {donationLocale.description && <p class="donation-lede">{donationLocale.description}</p>}
+
+      <div class="donation-progress" aria-label="寄付の進捗">
+        <div class="donation-progress-values">
+          <strong>{formatAmount(donation.current_amount)}</strong>
+          <span>目標 {formatAmount(donation.goal_amount)}</span>
         </div>
-        <div class="payment-method-card">
-          <h4>クレジットカード（Credit Card）</h4>
-          <p>OISTの寄付フォームを通じた、クレジットカード決済が可能です。</p>
+        <div class="donation-progress-track" role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin="0" aria-valuemax="100" aria-label={`寄付目標の${Math.round(progress)}%を達成`}>
+          <span style={`width: ${progress}%`}></span>
         </div>
+        <p class="donation-progress-meta">達成率 {Math.round(progress)}%{donation.last_updated && ` · 更新日 ${donation.last_updated}`}</p>
       </div>
 
-      <div class="donation-actions">
-        <a href="https://forms.oist.jp/ja/form/donate-now" target="_blank" rel="noopener noreferrer" class="btn btn-highlight btn-large">OIST寄付フォームへ</a>
+      {detailLinks.length > 0 && (
+        <nav class="donation-context-links" aria-label="寄付に関する情報">
+          {detailLinks.map((link) => (
+            <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+          ))}
+        </nav>
+      )}
+
+      <div class="payment-methods">
+        {hasBankTransfer && bankTransfer && (
+          <div class="payment-method-card payment-method-card-primary">
+            <p class="payment-method-eyebrow">Primary</p>
+            <h4>銀行振込</h4>
+            <dl class="bank-details">
+              <div><dt>銀行名</dt><dd>{bankTransfer.bank_name}</dd></div>
+              <div><dt>支店名</dt><dd>{bankTransfer.branch_name}</dd></div>
+              <div><dt>口座種別</dt><dd>{bankTransfer.account_type}</dd></div>
+              <div><dt>口座番号</dt><dd><code>{bankTransfer.account_number}</code></dd></div>
+              <div><dt>口座名義</dt><dd>{bankTransfer.account_holder}</dd></div>
+            </dl>
+            {bankTransfer.note && <p>{bankTransfer.note}</p>}
+          </div>
+        )}
+        {oistDonation && (
+          <div class="payment-method-card payment-method-card-secondary">
+            <p class="payment-method-eyebrow">Secondary</p>
+            <h4>OIST Donation</h4>
+            {oistDonation.note && <p>{oistDonation.note}</p>}
+            <a href={oistDonation.url} target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-large">OIST寄付フォームへ</a>
+          </div>
+        )}
       </div>
-    </div>
+
+      {oistDonation && (
+        <div class="donation-actions">
+          <a href={oistDonation.url} target="_blank" rel="noopener noreferrer" class="btn btn-highlight btn-large">ご支援の手続きをする</a>
+        </div>
+      )}
+
+      {!hasBankTransfer && !oistDonation && detailLinks.length === 0 && (
+        <p class="donation-empty">寄付に関する情報は準備中です。</p>
+      )}
+      {donation.last_updated && (
+        <p class="donation-updated">最終更新日: {donation.last_updated}</p>
+      )}
+      </div>
   </section>
 
   <section class="section section-alt">
@@ -141,6 +208,84 @@ const donationPdfPath = withBase('assets/donation/igem-okinawa-fundrasing-guide-
     border-radius: var(--border-radius-md);
     flex: 1;
     min-width: min(250px, 100%);
+  }
+  .payment-method-card-primary {
+    border: 2px solid var(--color-highlight);
+  }
+  .payment-method-card-secondary {
+    border: 2px solid var(--color-secondary);
+  }
+  .payment-method-eyebrow {
+    color: var(--color-highlight);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .donation-progress {
+    max-width: 760px;
+    margin: 2rem auto;
+    text-align: left;
+  }
+  .donation-progress-values,
+  .donation-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .donation-progress-track {
+    height: 0.8rem;
+    margin-top: 0.75rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--color-bg-alt);
+  }
+  .donation-progress-track span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-highlight);
+  }
+  .donation-progress-meta,
+  .donation-updated {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+  .donation-context-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 2rem auto;
+  }
+  .donation-context-links a {
+    color: var(--color-secondary);
+    font-weight: 600;
+  }
+  .bank-details {
+    margin: 1.5rem 0;
+    text-align: left;
+  }
+  .bank-details > div {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-primary-light);
+  }
+  .bank-details dt {
+    font-weight: 600;
+  }
+  .bank-details dd {
+    overflow-wrap: anywhere;
+  }
+  .bank-details code {
+    font-size: 1.1rem;
+    user-select: all;
+  }
+  .donation-empty {
+    margin: 2rem 0;
+    color: var(--color-text-muted);
   }
   .donation-actions {
     display: flex;

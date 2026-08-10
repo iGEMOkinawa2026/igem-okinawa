@@ -7,11 +7,27 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import Support from '../../components/Support.astro';
 import { withBase } from '../../lib/paths';
+import { getSettings } from '../../lib/settings';
 
 const sponsors = (await getCollection('sponsors')).sort(
   (a, b) => a.data.order - b.data.order,
 );
 const donationPdfPath = withBase('assets/donation/igem-okinawa-fundraising-guide-en.pdf');
+const donation = getSettings().donation;
+const donationLocale = donation.en;
+const progress = donation.goal_amount > 0
+  ? Math.min(100, Math.max(0, (donation.current_amount / donation.goal_amount) * 100))
+  : 0;
+const formatAmount = (amount: number) =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency: donation.currency }).format(amount);
+const detailLinks = [
+  { label: 'How funds are used', href: donationLocale.funding_plan_url },
+  { label: 'Supporter returns', href: donationLocale.returns_url },
+  { label: 'Activity updates', href: donationLocale.updates_url },
+].filter((link) => link.href);
+const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
+  ? donationLocale.oist
+  : null;
 ---
 
 <PageLayout
@@ -49,26 +65,53 @@ const donationPdfPath = withBase('assets/donation/igem-okinawa-fundraising-guide
     </div>
   </section>
 
-  <section class="section text-center">
+  <section class="section text-center donation-section">
     <div class="container">
-      <h2>Make a Donation</h2>
-      <p class="donation-lede">Donations are accepted through the official OIST donation form. Please use the donation guide below for details, and include iGEM Okinawa in the relevant message or designation field when applicable.</p>
-      
-      <div class="payment-methods">
-        <div class="payment-method-card">
-          <h4>Bank Transfer</h4>
-          <p>You can donate directly to our official bank account.</p>
+      <h2>{donationLocale.title || 'Make a Donation'}</h2>
+      {donationLocale.description && <p class="donation-lede">{donationLocale.description}</p>}
+
+      <div class="donation-progress" aria-label="Donation progress">
+        <div class="donation-progress-values">
+          <strong>{formatAmount(donation.current_amount)}</strong>
+          <span>of {formatAmount(donation.goal_amount)} goal</span>
         </div>
-        <div class="payment-method-card">
-          <h4>Credit Card</h4>
-          <p>We process credit card donations securely via OIST forms.</p>
+        <div class="donation-progress-track" role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin="0" aria-valuemax="100" aria-label={`${Math.round(progress)}% of donation goal reached`}>
+          <span style={`width: ${progress}%`}></span>
         </div>
+        <p class="donation-progress-meta">{Math.round(progress)}% reached{donation.last_updated && ` · Updated ${donation.last_updated}`}</p>
       </div>
 
-      <div class="donation-actions">
-        <a href="https://forms.oist.jp/form/donate-now" target="_blank" rel="noopener noreferrer" class="btn btn-highlight btn-large">Donate via OIST</a>
+      {detailLinks.length > 0 && (
+        <nav class="donation-context-links" aria-label="Donation information">
+          {detailLinks.map((link) => (
+            <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+          ))}
+        </nav>
+      )}
+
+      {oistDonation && (
+        <div class="payment-methods">
+          <div class="payment-method-card payment-method-card-primary">
+            <p class="payment-method-eyebrow">Primary donation method</p>
+            <h4>OIST Donation</h4>
+            {oistDonation.note && <p>{oistDonation.note}</p>}
+          </div>
+        </div>
+      )}
+
+      {oistDonation && (
+        <div class="donation-actions">
+          <a href={oistDonation.url} target="_blank" rel="noopener noreferrer" class="btn btn-highlight btn-large">Donate via OIST</a>
+        </div>
+      )}
+
+      {!oistDonation && detailLinks.length === 0 && (
+        <p class="donation-empty">Donation details will be updated soon.</p>
+      )}
+      {donation.last_updated && (
+        <p class="donation-updated">Last updated: {donation.last_updated}</p>
+      )}
       </div>
-    </div>
   </section>
 
   <section class="section section-alt">
@@ -141,6 +184,60 @@ const donationPdfPath = withBase('assets/donation/igem-okinawa-fundraising-guide
     border-radius: var(--border-radius-md);
     flex: 1;
     min-width: min(250px, 100%);
+  }
+  .payment-method-card-primary {
+    border: 2px solid var(--color-highlight);
+  }
+  .payment-method-eyebrow {
+    color: var(--color-highlight);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .donation-progress {
+    max-width: 760px;
+    margin: 2rem auto;
+    text-align: left;
+  }
+  .donation-progress-values,
+  .donation-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .donation-progress-track {
+    height: 0.8rem;
+    margin-top: 0.75rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--color-bg-alt);
+  }
+  .donation-progress-track span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-highlight);
+  }
+  .donation-progress-meta,
+  .donation-updated {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+  .donation-context-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 2rem auto;
+  }
+  .donation-context-links a {
+    color: var(--color-secondary);
+    font-weight: 600;
+  }
+  .donation-empty {
+    margin: 2rem 0;
+    color: var(--color-text-muted);
   }
   .donation-actions {
     display: flex;

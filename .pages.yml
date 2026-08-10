@@ -471,3 +471,145 @@ content:
         label: Current Project Year
         type: number
         required: true
+      - name: donation
+        label: Donation Settings
+        type: object
+        required: false
+        fields:
+          - name: goal_amount
+            label: Donation Goal Amount
+            type: number
+            required: true
+          - name: current_amount
+            label: Current Donation Amount
+            type: number
+            required: true
+          - name: currency
+            label: Currency
+            type: select
+            required: true
+            options:
+              values:
+                - name: JPY
+                  label: Japanese Yen (JPY)
+          - name: last_updated
+            label: Last Updated
+            type: date
+            required: false
+          - name: ja
+            label: Japanese Donation Content
+            type: object
+            required: false
+            fields:
+              - name: title
+                label: Title
+                type: string
+                required: false
+              - name: description
+                label: Description
+                type: text
+                required: false
+              - name: funding_plan_url
+                label: Funding Plan URL
+                type: string
+                required: false
+              - name: returns_url
+                label: Supporter Returns URL
+                type: string
+                required: false
+              - name: updates_url
+                label: Activity Updates URL
+                type: string
+                required: false
+              - name: bank_transfer
+                label: Bank Transfer
+                type: object
+                required: false
+                fields:
+                  - name: enabled
+                    label: Enabled
+                    type: boolean
+                    required: false
+                  - name: bank_name
+                    label: Bank Name
+                    type: string
+                    required: false
+                  - name: branch_name
+                    label: Branch Name
+                    type: string
+                    required: false
+                  - name: account_type
+                    label: Account Type
+                    type: string
+                    required: false
+                  - name: account_number
+                    label: Account Number
+                    type: string
+                    required: false
+                  - name: account_holder
+                    label: Account Holder
+                    type: string
+                    required: false
+                  - name: note
+                    label: Note
+                    type: text
+                    required: false
+              - name: oist
+                label: OIST Donation
+                type: object
+                required: false
+                fields:
+                  - name: enabled
+                    label: Enabled
+                    type: boolean
+                    required: false
+                  - name: url
+                    label: URL
+                    type: string
+                    required: false
+                  - name: note
+                    label: Note
+                    type: text
+                    required: false
+          - name: en
+            label: English Donation Content
+            type: object
+            required: false
+            fields:
+              - name: title
+                label: Title
+                type: string
+                required: false
+              - name: description
+                label: Description
+                type: text
+                required: false
+              - name: funding_plan_url
+                label: Funding Plan URL
+                type: string
+                required: false
+              - name: returns_url
+                label: Supporter Returns URL
+                type: string
+                required: false
+              - name: updates_url
+                label: Activity Updates URL
+                type: string
+                required: false
+              - name: oist
+                label: OIST Donation
+                type: object
+                required: false
+                fields:
+                  - name: enabled
+                    label: Enabled
+                    type: boolean
+                    required: false
+                  - name: url
+                    label: URL
+                    type: string
+                    required: false
+                  - name: note
+                    label: Note
+                    type: text
+                    required: false
