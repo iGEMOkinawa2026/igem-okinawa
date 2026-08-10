@@ -89,25 +89,17 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
         </nav>
       )}
 
-      {oistDonation && (
-        <div class="payment-methods">
-          <div class="payment-method-card payment-method-card-primary">
-            <p class="payment-method-eyebrow">Primary donation method</p>
-            <h4>OIST Donation</h4>
-            {oistDonation.note && <p>{oistDonation.note}</p>}
-          </div>
+      <div class="payment-methods">
+        <div class="payment-method-card payment-method-card-primary">
+          <p class="payment-method-eyebrow">Primary donation method</p>
+          <h4>OIST Donation</h4>
+          {oistDonation?.note && <p>{oistDonation.note}</p>}
+          {!oistDonation && <p class="payment-status">Detailed information is being prepared.</p>}
+          {oistDonation && (
+            <a href={oistDonation.url} target="_blank" rel="noopener noreferrer" class="btn btn-highlight btn-large">Donate via OIST</a>
+          )}
         </div>
-      )}
-
-      {oistDonation && (
-        <div class="donation-actions">
-          <a href={oistDonation.url} target="_blank" rel="noopener noreferrer" class="btn btn-highlight btn-large">Donate via OIST</a>
-        </div>
-      )}
-
-      {!oistDonation && detailLinks.length === 0 && (
-        <p class="donation-empty">Donation details will be updated soon.</p>
-      )}
+      </div>
       {donation.last_updated && (
         <p class="donation-updated">Last updated: {donation.last_updated}</p>
       )}
@@ -237,6 +229,9 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
   }
   .donation-empty {
     margin: 2rem 0;
+    color: var(--color-text-muted);
+  }
+  .payment-status {
     color: var(--color-text-muted);
   }
   .donation-actions {
