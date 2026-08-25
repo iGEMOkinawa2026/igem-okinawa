@@ -11,4 +11,5 @@ description_ja: |
 image: /media/IMG_4225 (2)-1.webp
 imagePlaceholder: FamilyMart
 imagePlaceholder_ja: ファミリーマート
+order: 3
 ---
