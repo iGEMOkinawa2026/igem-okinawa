@@ -11,4 +11,5 @@ description_ja: 私たちは募金活動の一環として、国際通りで街�
 image: /media/IMG_4473.webp
 imagePlaceholder: kokusai street
 imagePlaceholder_ja: 国際通り
+order: 2
 ---
