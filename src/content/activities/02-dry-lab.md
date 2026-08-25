@@ -5,5 +5,5 @@ description: Helicobacter pylori infection causes gastritis, ulcers and stomach
   experience symptoms.
 title_ja: ピロリ菌 — 胃がん
 description_ja: ヘリコバクター・ピロリ菌への感染は、胃炎・胃潰瘍・胃がんを引き起こします。世界人口の約50%が感染していますが、多くの場合は無症状です。
-order: 3
+order: 7
 ---
