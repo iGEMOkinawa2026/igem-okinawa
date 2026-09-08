@@ -6,7 +6,12 @@ donation:
   last_updated: 2026-09-08
   ja:
     bank_transfer:
-      enabled: false
+      enabled: true
+      bank_name: 沖縄銀行
+      branch_name: 恩名
+      account_type: 普通
+      account_number: "1332774"
+      account_holder: アイジェム　オキナワ
     oist:
       enabled: true
       url: https://forms.oist.jp/ja/form/donate-now
