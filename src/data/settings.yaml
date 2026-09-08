@@ -12,4 +12,5 @@ donation:
       url: https://forms.oist.jp/ja/form/donate-now
   en:
     oist:
-      enabled: false
+      enabled: true
+      url: https://forms.oist.jp/form/donate-now
