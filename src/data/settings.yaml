@@ -8,13 +8,15 @@ donation:
     bank_transfer:
       enabled: true
       bank_name: 沖縄銀行
-      branch_name: 恩名
+      branch_name: 恩納
       account_type: 普通
       account_number: "1332774"
       account_holder: アイジェム　オキナワ
+      note: 個人でご寄付いただく方で、領収書が不要の場合は、こちらからご寄付をお願いいたします。
     oist:
       enabled: true
       url: https://forms.oist.jp/ja/form/donate-now
+      note: 企業・団体の皆さま、または領収書をご希望の方は、こちらからご寄付をお願いいたします。
   en:
     oist:
       enabled: true
