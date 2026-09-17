@@ -78,6 +78,46 @@ const members = defineCollection({
   }),
 });
 
+/**
+ * プロジェクトページ（/project/ と /ja/project/）のストーリー本文。
+ * EN / JA で同じ構造を持ち、`story`（英語）と `story_ja`（日本語）に分かれる。
+ *
+ * 複数行を持つ項目は、入力した改行位置がそのまま画面上の改行になる。
+ * レイアウトが Figma の座標に合わせた絶対配置のため、行数や1行の文字数を
+ * 大きく増やすと図形や画像と重なる。既存の行数・文字数を目安にすること。
+ */
+const projectStory = z.object({
+  intent: z.string().default(''),
+  problem_heading: z.string().default(''),
+  problem_body: z.string().default(''),
+  but_lead: z.string().default(''),
+  resistance_heading: z.string().default(''),
+  resistance_body: z.string().default(''),
+  reveal_before: z.string().default(''),
+  reveal_word: z.string().default(''),
+  reveal_after: z.string().default(''),
+  phage_heading: z.string().default(''),
+  phage_body: z.string().default(''),
+  weakness_heading: z.string().default(''),
+  weakness_body: z.string().default(''),
+  goal: z.string().default(''),
+  how_heading: z.string().default(''),
+  how_body: z.string().default(''),
+  ai_heading: z.string().default(''),
+  ai_body: z.string().default(''),
+  impact_heading: z.string().default(''),
+  /** 地域課題のカード。レイアウト上、表示されるのは先頭3件まで。 */
+  cards: z
+    .array(
+      z.object({
+        title: z.string().default(''),
+        body: z.string().default(''),
+      }),
+    )
+    .default([]),
+  closing: z.string().default(''),
+});
+
 const project = defineCollection({
   type: 'content',
   schema: z.object({
@@ -90,6 +130,12 @@ const project = defineCollection({
     image: z.string().optional(),
     description: z.string().optional(),
     description_ja: z.string().optional(),
+    /**
+     * 未入力の場合、プロジェクトページは summary / description
+     * （日本語は summary_ja / description_ja）を使った簡易表示にフォールバックする。
+     */
+    story: projectStory.optional(),
+    story_ja: projectStory.optional(),
   }),
 });
 
