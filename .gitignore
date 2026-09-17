@@ -7,3 +7,7 @@ npm-debug.log*
 .env.*
 
 .claude/
+# 作業中に置いた一時ファイル（リポジトリには含めない）
+/2Q.png
+/9k.png
+/*.pptx
