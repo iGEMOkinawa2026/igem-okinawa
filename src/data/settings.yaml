@@ -4,6 +4,27 @@ donation:
   current_amount: 6580000
   currency: JPY
   last_updated: 2026-09-17
+  fx:
+    # 1 EUR あたりの円。EUR 表記の費用に円換算を併記するために使う。
+    # 相場が動いたら rate と updated を更新すること。
+    eur_jpy: 170
+    updated: 2026-09-17
+    source_url: https://www.google.com/search?q=EUR+JPY
+  funding:
+    registration_fee_eur: 8700
+    participation_fee_eur: 575
+    # 表示順そのまま。研究・実験・アウトリーチを先に、渡航・宿泊を後ろに置く。
+    other_costs:
+      - label: Research
+        label_ja: 研究費
+      - label: Lab equipment and materials
+        label_ja: 実験機材費
+      - label: Outreach activities
+        label_ja: アウトリーチ活動費
+      - label: Travel
+        label_ja: 渡航費
+      - label: Accommodation
+        label_ja: 宿泊費
   ja:
     bank_transfer:
       enabled: true

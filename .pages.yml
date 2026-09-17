@@ -496,6 +496,50 @@ content:
             label: Last Updated
             type: date
             required: false
+          - name: fx
+            label: Exchange Rate
+            type: object
+            required: false
+            fields:
+              - name: eur_jpy
+                label: JPY per 1 EUR (0 to hide yen figures)
+                type: number
+                required: false
+              - name: updated
+                label: Rate Updated
+                type: date
+                required: false
+              - name: source_url
+                label: Rate Source URL
+                type: string
+                required: false
+          - name: funding
+            label: Required Funding
+            type: object
+            required: false
+            fields:
+              - name: registration_fee_eur
+                label: Team Registration Fee (EUR)
+                type: number
+                required: false
+              - name: participation_fee_eur
+                label: Participation Fee per Person (EUR)
+                type: number
+                required: false
+              - name: other_costs
+                label: Other Costs (shown in this order)
+                type: object
+                list: true
+                required: false
+                fields:
+                  - name: label
+                    label: Label (English)
+                    type: string
+                    required: false
+                  - name: label_ja
+                    label: Label (Japanese)
+                    type: string
+                    required: false
           - name: ja
             label: Japanese Donation Content
             type: object
