@@ -73,6 +73,36 @@ export const siteCopy = {
         href: 'archive/',
       },
     ],
+    /** Landing-page About cards. `icon` selects the illustration in src/assets/. */
+    about: {
+      heading: 'About iGEM Okinawa',
+      subtitle: 'Who we are',
+      cards: [
+        {
+          icon: 'what',
+          title: 'What is iGEM Okinawa?',
+          body: 'We are a team of students from Okinawa tackling social challenges through synthetic biology, developing solutions rooted in our local environment and sharing them with the world.',
+        },
+        {
+          icon: 'who',
+          title: 'Who takes part?',
+          body: 'Students gather from schools across Okinawa — including National Institute of Technology, Okinawa College (KOSEN), Okinawa Institute of Science and Technology (OIST), and the University of the Ryukyus — each bringing their own expertise and experience.',
+        },
+        {
+          icon: 'vision',
+          title: 'What are we aiming for?',
+          body: "To nurture Okinawa's next generation of scientists and connect local wisdom with global innovation — building a sustainable future through synthetic biology.",
+        },
+      ],
+    },
+    projectPage: {
+      badgeLabel: 'Project {year}',
+      fallbackTitle: '{year} Project',
+      preparingNotice:
+        'The {year} project is being prepared. You can find our past work in the archive.',
+      wikiLabel: 'iGEM Wiki',
+      archiveLabel: 'Past Projects',
+    },
     footer: {
       brandTitle: 'iGEM Okinawa',
       brandTagline: 'From Okinawa to the world. \nCreating the future through synthetic biology.',
@@ -147,6 +177,35 @@ export const siteCopy = {
         href: 'archive/',
       },
     ],
+    about: {
+      heading: 'iGEM Okinawa について',
+      subtitle: '私たちについて',
+      cards: [
+        {
+          icon: 'what',
+          title: 'iGEM Okinawaとは？',
+          body: '合成生物学を用いて社会課題に取り組む沖縄の学生チームです。沖縄の環境に根ざした独自の解決策を開発し、世界へと発信しています。',
+        },
+        {
+          icon: 'who',
+          title: 'どんな人が参加している？',
+          body: '沖縄工業高等専門学校（KOSEN）、沖縄科学技術大学院大学（OIST）、琉球大学をはじめ、沖縄県内のさまざまな学校から学生が集まり、それぞれの専門や経験を生かして活動しています。',
+        },
+        {
+          icon: 'vision',
+          title: '何を目指している？',
+          body: '沖縄の次世代の科学者を育て、地域の知恵と世界のイノベーションをつなぎます。合成生物学を用いて、持続可能な未来を築きます。',
+        },
+      ],
+    },
+    projectPage: {
+      badgeLabel: '{year}年の活動',
+      fallbackTitle: '{year}年のプロジェクト',
+      preparingNotice:
+        '{year}年のプロジェクトは現在準備中です。これまでの活動はアーカイブからご覧いただけます。',
+      wikiLabel: 'iGEM Wiki',
+      archiveLabel: 'これまでのプロジェクト',
+    },
     footer: {
       brandTitle: 'iGEM Okinawa',
       brandTagline: '沖縄から世界へ。\n合成生物学で未来を創造する。',
