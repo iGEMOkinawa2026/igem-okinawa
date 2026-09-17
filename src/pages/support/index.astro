@@ -71,8 +71,6 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
             </li>
           </ul>
           <FxNote fx={fx} locale="en" />
-            </p>
-          )}
         </div>
       </div>
     </div>
@@ -84,7 +82,7 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
       {donationLocale.description && <p class="donation-lede">{donationLocale.description}</p>}
 
       <div class="payment-methods">
-        <div class="payment-method-card payment-method-card-primary">
+        <div class="payment-method">
           <h4>OIST Donation</h4>
           <p class="payment-method-lede">
             Donations from outside Japan are handled through the official OIST donation form.
@@ -148,8 +146,7 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
   .info-card {
     background: var(--color-bg-base);
     padding: 2rem;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-primary-light);
   }
   .info-card h3 {
     color: var(--color-primary);
@@ -161,6 +158,10 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
   }
   .info-card li {
     margin-bottom: 0.5rem;
+  }
+  /* 説明文が未設定でも見出しと決済手段がくっつかないようにする */
+  .donation-section h2 {
+    margin-bottom: 2rem;
   }
   .donation-lede {
     max-width: 760px;
@@ -174,29 +175,30 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
     padding-top: 0;
     padding-bottom: clamp(2rem, 5vw, 3.5rem);
   }
-  /* 決済手段は OIST のみなので、1枚を中央に置く */
+  /* 決済手段は OIST のみ。枠は付けず中央に置く */
   .payment-methods {
     display: flex;
     justify-content: center;
   }
-  .payment-method-card {
-    padding: 2.5rem 2rem;
-    background: var(--color-bg-alt);
-    border-radius: var(--border-radius-md);
-    max-width: 640px;
-    width: 100%;
+  .payment-method {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 52ch;
+  }
+  .payment-method h4 {
+    margin: 0;
+    font-size: 1.25rem;
   }
   .payment-method-lede,
   .payment-method-note {
     color: var(--color-text-muted);
     font-size: 0.9rem;
+    margin: 0;
   }
-  .payment-method-lede {
-    max-width: 48ch;
-    margin-inline: auto;
-  }
-  .payment-method-note {
-    margin-top: 1rem;
+  .payment-method .btn {
+    margin-block: 0.5rem;
   }
   .donation-updated {
     color: var(--color-text-muted);

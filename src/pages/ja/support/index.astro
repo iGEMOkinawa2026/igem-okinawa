@@ -80,8 +80,6 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
             </li>
           </ul>
           <FxNote fx={fx} locale="ja" />
-            </p>
-          )}
         </div>
       </div>
     </div>
@@ -93,7 +91,7 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
       {donationLocale.description && <p class="donation-lede">{donationLocale.description}</p>}
 
       <div class="payment-methods">
-        <div id="bank-transfer" class="payment-method-card payment-method-card-primary">
+        <div id="bank-transfer" class="payment-method">
           <p class="payment-method-eyebrow">おすすめ</p>
           <h4>銀行振込</h4>
           <p class="payment-method-lede">iGEM Okinawaの公式口座へ直接お振り込みいただけます。</p>
@@ -111,8 +109,8 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
           {hasBankTransfer && bankTransfer?.note && <p class="payment-method-note">{bankTransfer.note}</p>}
         </div>
 
-        <div class="payment-method-card payment-method-card-secondary">
-          <p class="payment-method-eyebrow">クレジットカード</p>
+        <div class="payment-method">
+          <p class="payment-method-eyebrow payment-method-eyebrow-muted">クレジットカード</p>
           <h4>OIST寄付フォーム</h4>
           {oistDonation?.note && <p class="payment-method-note">{oistDonation.note}</p>}
           {!oistDonation && <p class="payment-status">寄付フォームなどの詳細は準備中です。</p>}
@@ -163,8 +161,7 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
   .info-card {
     background: var(--color-bg-base);
     padding: 2rem;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-primary-light);
   }
   .info-card h3 {
     color: var(--color-primary);
@@ -176,6 +173,10 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
   }
   .info-card li {
     margin-bottom: 0.5rem;
+  }
+  /* 説明文が未設定でも見出しと決済手段がくっつかないようにする */
+  .donation-section h2 {
+    margin-bottom: 2rem;
   }
   .donation-lede {
     max-width: 760px;
@@ -189,51 +190,55 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
     padding-top: 0;
     padding-bottom: clamp(2rem, 5vw, 3.5rem);
   }
+  /* 枠や背景は付けず、余白と見出しだけで2つを分ける */
   .payment-methods {
     display: grid;
     grid-template-columns: 1fr;
-    justify-content: center;
-    gap: 2rem;
+    gap: 3rem;
     max-width: 880px;
     margin-inline: auto;
     text-align: center;
   }
   @media (min-width: 900px) {
-    /* 銀行振込を主役にするため、左を広く取る */
-    .payment-methods { grid-template-columns: 1.35fr 1fr; align-items: start; }
+    .payment-methods { grid-template-columns: 1fr 1fr; gap: 4rem; }
   }
-  .payment-method-card {
-    padding: 2rem 1.5rem;
-    background: var(--color-bg-alt);
-    border-radius: var(--border-radius-md);
+  .payment-method {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .payment-method h4 {
+    margin: 0;
+    font-size: 1.25rem;
   }
   .payment-method-lede,
   .payment-method-note {
     color: var(--color-text-muted);
     font-size: 0.9rem;
+    margin: 0;
+    max-width: 34ch;
   }
-  .payment-method-note {
+  .payment-method .btn {
     margin-top: 1rem;
   }
-  .payment-method-card-primary {
-    border: 2px solid var(--color-highlight);
-  }
-  .payment-method-card-secondary {
-    border: 2px solid var(--color-secondary);
-  }
   .payment-method-eyebrow {
+    margin: 0;
     color: var(--color-highlight);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.08em;
-    text-transform: uppercase;
+  }
+  .payment-method-eyebrow-muted {
+    color: var(--color-text-muted);
   }
   .donation-updated {
     color: var(--color-text-muted);
     font-size: 0.9rem;
   }
   .bank-details {
-    margin: 1.5rem auto 0;
+    margin: 1rem auto 0;
+    width: 100%;
     max-width: 22rem;
     text-align: left;
   }
