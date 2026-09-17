@@ -3,7 +3,7 @@ donation:
   goal_amount: 16000000
   current_amount: 6580000
   currency: JPY
-  last_updated: 2026-09-15
+  last_updated: 2026-09-17
   ja:
     bank_transfer:
       enabled: true
