@@ -1,0 +1,25 @@
+---
+import { formatEur, formatJpy, jpyFromEur, type MoneyLocale } from '../lib/money';
+import type { FxSettings } from '../lib/settings';
+
+interface Props {
+  amountEur: number;
+  fx: FxSettings;
+  locale: MoneyLocale;
+}
+
+const { amountEur, fx, locale } = Astro.props;
+const isJa = locale === 'ja';
+const showJpy = fx.eur_jpy > 0;
+const approx = (value: string) => (isJa ? `（約${value}）` : ` (approx. ${value})`);
+---
+
+<span class="eur" data-eur={amountEur}>{formatEur(amountEur, locale)}{showJpy && (
+  <span class="eur-jpy" data-eur-jpy>{approx(formatJpy(jpyFromEur(amountEur, fx.eur_jpy), locale))}</span>
+)}</span>
+
+<style>
+  .eur-jpy {
+    white-space: nowrap;
+  }
+</style>

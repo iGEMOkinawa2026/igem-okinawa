@@ -29,10 +29,14 @@ export interface DonationLocaleSettings {
 }
 
 export interface FxSettings {
-  /** 1 EUR あたりの円。0 なら円換算を表示しない。 */
+  /** 1 EUR あたりの円。0 なら円換算を表示しない。取得に失敗したときの表示にも使う。 */
   eur_jpy: number;
   updated: string;
+  /** true なら表示時に api_url からその日のレートを取り直す。 */
+  live: boolean;
+  api_url: string;
   source_url: string;
+  converter_url: string;
 }
 
 export interface FundingCost {
@@ -83,7 +87,14 @@ const emptyDonationLocale = (includeBankTransfer: boolean): DonationLocaleSettin
   ...(includeBankTransfer ? { bank_transfer: { ...emptyBankTransfer } } : {}),
 });
 
-const emptyFx: FxSettings = { eur_jpy: 0, updated: '', source_url: '' };
+const emptyFx: FxSettings = {
+  eur_jpy: 0,
+  updated: '',
+  live: false,
+  api_url: '',
+  source_url: '',
+  converter_url: '',
+};
 
 const emptyFunding: FundingSettings = {
   registration_fee_eur: 0,

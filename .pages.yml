@@ -509,8 +509,20 @@ content:
                 label: Rate Updated
                 type: date
                 required: false
+              - name: live
+                label: Fetch Today's Rate When the Page Loads
+                type: boolean
+                required: false
+              - name: api_url
+                label: Rate API URL
+                type: string
+                required: false
               - name: source_url
                 label: Rate Source URL
+                type: string
+                required: false
+              - name: converter_url
+                label: Currency Converter URL (for overseas donors)
                 type: string
                 required: false
           - name: funding

@@ -9,7 +9,8 @@ import Support from '../../../components/Support.astro';
 import DonationSummary from '../../../components/DonationSummary.astro';
 import { withBase } from '../../../lib/paths';
 import { getSettings } from '../../../lib/settings';
-import { formatEurWithJpy, fxNote } from '../../../lib/money';
+import EurAmount from '../../../components/EurAmount.astro';
+import FxNote from '../../../components/FxNote.astro';
 
 const sponsors = (await getCollection('sponsors')).sort(
   (a, b) => a.data.order - b.data.order,
@@ -71,22 +72,14 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
         <div class="info-card">
           <h3>必要な資金</h3>
           <ul>
-            <li><strong>チーム登録料:</strong> {formatEurWithJpy(funding.registration_fee_eur, fx, 'ja')}</li>
-            <li><strong>参加費:</strong> 1人あたり {formatEurWithJpy(funding.participation_fee_eur, fx, 'ja')}</li>
+            <li><strong>チーム登録料:</strong> <EurAmount amountEur={funding.registration_fee_eur} fx={fx} locale="ja" /></li>
+            <li><strong>参加費:</strong> 1人あたり <EurAmount amountEur={funding.participation_fee_eur} fx={fx} locale="ja" /></li>
             <li>
               <strong>その他の費用:</strong>
               {funding.other_costs.map((cost) => cost.label_ja || cost.label).join('、')}
             </li>
           </ul>
-          {fxNote(fx, 'ja') && (
-            <p class="fx-note">
-              {fxNote(fx, 'ja')}
-              {fx.source_url && (
-                <>
-                  {' '}
-                  <a href={fx.source_url} target="_blank" rel="noopener noreferrer">最新の為替レートを確認する</a>
-                </>
-              )}
+          <FxNote fx={fx} locale="ja" />
             </p>
           )}
         </div>
@@ -195,11 +188,6 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
     margin-top: -1.5rem;
     padding-top: 0;
     padding-bottom: clamp(2rem, 5vw, 3.5rem);
-  }
-  .fx-note {
-    margin-top: 1.25rem;
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
   }
   .payment-methods {
     display: grid;

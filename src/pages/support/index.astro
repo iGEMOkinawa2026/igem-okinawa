@@ -9,7 +9,8 @@ import Support from '../../components/Support.astro';
 import DonationSummary from '../../components/DonationSummary.astro';
 import { withBase } from '../../lib/paths';
 import { getSettings } from '../../lib/settings';
-import { formatEurWithJpy, fxNote } from '../../lib/money';
+import EurAmount from '../../components/EurAmount.astro';
+import FxNote from '../../components/FxNote.astro';
 
 const sponsors = (await getCollection('sponsors')).sort(
   (a, b) => a.data.order - b.data.order,
@@ -62,22 +63,14 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
         <div class="info-card">
           <h3>Required Funding</h3>
           <ul>
-            <li><strong>Team registration fee:</strong> {formatEurWithJpy(funding.registration_fee_eur, fx, 'en')}</li>
-            <li><strong>Participation fee:</strong> {formatEurWithJpy(funding.participation_fee_eur, fx, 'en')} per person</li>
+            <li><strong>Team registration fee:</strong> <EurAmount amountEur={funding.registration_fee_eur} fx={fx} locale="en" /></li>
+            <li><strong>Participation fee:</strong> <EurAmount amountEur={funding.participation_fee_eur} fx={fx} locale="en" /> per person</li>
             <li>
               <strong>Additional costs:</strong>
               {funding.other_costs.map((cost) => cost.label).join(', ')}
             </li>
           </ul>
-          {fxNote(fx, 'en') && (
-            <p class="fx-note">
-              {fxNote(fx, 'en')}
-              {fx.source_url && (
-                <>
-                  {' '}
-                  <a href={fx.source_url} target="_blank" rel="noopener noreferrer">Check the current rate</a>
-                </>
-              )}
+          <FxNote fx={fx} locale="en" />
             </p>
           )}
         </div>
@@ -104,10 +97,10 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
           )}
           <p class="payment-method-note">
             Amounts are received in Japanese yen (JPY).
-            {fx.source_url && (
+            {fx.converter_url && (
               <>
                 {' '}
-                <a href={fx.source_url} target="_blank" rel="noopener noreferrer">Convert your currency</a>
+                <a href={fx.converter_url} target="_blank" rel="noopener noreferrer">Convert your currency</a>
               </>
             )}
           </p>
@@ -180,11 +173,6 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
     margin-top: -1.5rem;
     padding-top: 0;
     padding-bottom: clamp(2rem, 5vw, 3.5rem);
-  }
-  .fx-note {
-    margin-top: 1.25rem;
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
   }
   /* 決済手段は OIST のみなので、1枚を中央に置く */
   .payment-methods {

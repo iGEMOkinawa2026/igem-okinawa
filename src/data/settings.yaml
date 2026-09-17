@@ -5,11 +5,17 @@ donation:
   currency: JPY
   last_updated: 2026-09-17
   fx:
-    # 1 EUR あたりの円。EUR 表記の費用に円換算を併記するために使う。
-    # 相場が動いたら rate と updated を更新すること。
-    eur_jpy: 170
+    # 1 EUR あたりの円。0 にすると円換算を出さない。
+    # 通常は下の api_url から読み込んだ当日のレートで上書きされる。
+    # ここの値は読み込みに失敗したときの表示に使われる。
+    eur_jpy: 178.75
     updated: 2026-09-17
-    source_url: https://www.google.com/search?q=EUR+JPY
+    # 表示時にレートを取得する。false にすると上の固定値だけを使う。
+    live: true
+    api_url: https://api.frankfurter.dev/v1/latest?base=EUR&symbols=JPY
+    source_url: https://www.frankfurter.dev/
+    # 海外からの寄付者向けに案内する通貨換算サイト
+    converter_url: https://www.xe.com/currencyconverter/convert/?To=JPY
   funding:
     registration_fee_eur: 8700
     participation_fee_eur: 575
