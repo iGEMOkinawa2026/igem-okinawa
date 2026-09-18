@@ -14,5 +14,5 @@ description_ja: |
   私たちの研究や、沖縄から世界に挑戦する想いをお話しする貴重な機会となりました。
   琉球新報さん、ありがとうございました！
 image: /media/Ryoma.jpg
-order: 4
+order: 1
 ---
