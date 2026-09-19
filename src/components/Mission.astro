@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
 interface MissionCard {
   icon: string;
   title: string;
@@ -9,11 +12,13 @@ interface Props {
   sectionTitle: string;
   subtitle: string;
   cards: MissionCard[];
+  /* card.icon をキーに画像を引く */
+  icons: Record<string, ImageMetadata>;
 }
-const { sectionTitle, subtitle, cards } = Astro.props;
+const { sectionTitle, subtitle, cards, icons } = Astro.props;
 ---
 
-<section class="mission section">
+<section id="about" class="section section-alt">
   <div class="container">
     <div class="section-header text-center">
       <h2>{sectionTitle}</h2>
@@ -23,7 +28,14 @@ const { sectionTitle, subtitle, cards } = Astro.props;
       {
         cards.map((card) => (
           <div class="mission-card">
-            <div class="icon">{card.icon}</div>
+            <Image
+              src={icons[card.icon]}
+              alt=""
+              width={120}
+              height={120}
+              loading="lazy"
+              class="mission-icon"
+            />
             <h3>{card.title}</h3>
             <p>{card.body}</p>
           </div>
@@ -32,3 +44,13 @@ const { sectionTitle, subtitle, cards } = Astro.props;
     </div>
   </div>
 </section>
+
+<style>
+  .mission-card .mission-icon {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+    margin: 0 0 1.5rem;
+    display: block;
+  }
+</style>

@@ -1,29 +1,44 @@
 ---
+/**
+ * Project Page (JA)
+ *
+ * 本文と見た目は ProjectStory.astro に集約している（EN / JA で共通）。
+ * 表示内容は src/content/project/{current_year}.md から読むため、
+ * このページはデータの取得とヘッダー・フッターの組み立てだけを行う。
+ */
+import YAML from 'yaml';
+import { getEntry } from 'astro:content';
+
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import Footer from '../../../components/Footer.astro';
+import ProjectStory from '../../../components/ProjectStory.astro';
+
 import { siteCopy } from '../../../data/siteCopy';
 import { getMainNav } from '../../../data/navigation';
 import { withBase } from '../../../lib/paths';
 import { getSettings } from '../../../lib/settings';
-import { getEntry } from 'astro:content';
-import YAML from 'yaml';
+
 import socialRaw from '../../../data/social.yaml?raw';
 
-const settings = getSettings();
-const currentYear = settings.current_year;
-const currentProject = await getEntry('project', currentYear.toString());
+const social = YAML.parse(socialRaw) as {
+  links: { platform: string; url: string; shortLabel?: string }[];
+};
 
-const social = YAML.parse(socialRaw) as any;
 const copy = siteCopy.ja;
 const navItems = getMainNav('ja');
-const footerLinks = navItems.map(i => ({ label: i.label, href: i.href }));
+const footerLinks = navItems.map((item) => ({ label: item.label, href: item.href }));
 
-if (!currentProject) {
-  return Astro.redirect(withBase('ja/archive/'));
-}
+const currentYear = getSettings().current_year;
+const currentProject = await getEntry('project', currentYear.toString());
+const projectData = currentProject?.data;
+
+/* 日本語が未入力なら英語へ落とす（docs/ai/coding-rules.md のローカライズ規約）。 */
+const pageDescription =
+  projectData?.summary_ja || projectData?.summary || copy.page.description;
 ---
-<BaseLayout title={`プロジェクト ${currentYear} - ${copy.page.title}`} description={currentProject.data.summary_ja || currentProject.data.summary} lang="ja">
+
+<BaseLayout title={`プロジェクト ${currentYear} - ${copy.page.title}`} description={pageDescription} lang="ja">
   <Header
     siteTitle={copy.header.siteTitle}
     logoHref={withBase('ja/')}
@@ -33,42 +48,20 @@ if (!currentProject) {
     activeLang="ja"
     menuToggleLabel={copy.header.menuToggleLabel}
   />
-  <main class="section">
-    <div class="container">
-      <div class="text-center" style="margin-bottom: 3rem;">
-        <span class="project-year-badge">Project {currentYear}</span>
-        <h1 style="color: var(--color-primary); margin-top: 1rem;">{currentProject.data.title_ja || currentProject.data.title}</h1>
-      </div>
-      
-      {currentProject.data.image && (
-        <img src={withBase(currentProject.data.image)} alt={currentProject.data.title_ja || currentProject.data.title} style="width: 100%; border-radius: var(--border-radius-lg); margin-bottom: 2rem;" />
-      )}
-      
-      <div class="content" style="max-width: 800px; margin: 0 auto; font-size: 1.125rem; line-height: 1.8;">
-        <p>{currentProject.data.summary_ja || currentProject.data.summary}</p>
-        {currentProject.data.description_ja ? <p>{currentProject.data.description_ja}</p> : (currentProject.data.description && <p>{currentProject.data.description}</p>)}
-        
-        {currentProject.data.wiki_url && (
-          <div style="margin-top: 2rem; text-align: center;">
-            <a href={currentProject.data.wiki_url} target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-              iGEM公式Wikiへ
-            </a>
-          </div>
-        )}
-      </div>
-    </div>
-  </main>
-  <Footer brandTitle={copy.footer.brandTitle} brandTagline={copy.footer.brandTagline} exploreHeading={copy.footer.exploreHeading} exploreLinks={footerLinks} connectHeading={copy.footer.connectHeading} copyrightLine={copy.footer.copyrightLine} privacyHref={copy.footer.privacyHref} privacyLabel={copy.footer.privacyLabel} termsHref={copy.footer.termsHref} termsLabel={copy.footer.termsLabel} socialLinks={social.links} />
-</BaseLayout>
 
-<style>
-  .project-year-badge {
-    background: var(--color-primary);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 9999px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-</style>
+  <ProjectStory locale="ja" year={currentYear} project={projectData} />
+
+  <Footer
+    brandTitle={copy.footer.brandTitle}
+    brandTagline={copy.footer.brandTagline}
+    exploreHeading={copy.footer.exploreHeading}
+    exploreLinks={footerLinks}
+    connectHeading={copy.footer.connectHeading}
+    copyrightLine={copy.footer.copyrightLine}
+    privacyHref={copy.footer.privacyHref}
+    privacyLabel={copy.footer.privacyLabel}
+    termsHref={copy.footer.termsHref}
+    termsLabel={copy.footer.termsLabel}
+    socialLinks={social.links}
+  />
+</BaseLayout>
