@@ -1,26 +1,22 @@
 # プロジェクトページの構造と変更方法
 
-`/ja/project/` を作っているファイルの解説です。
-「ここの文章を変えたい」「画像を入れたい」ときの地図として使ってください。
+`/project/`（英語）と `/ja/project/`（日本語）を作っているファイルの解説です。
+「ここの文章を変えたい」「画像を入れ替えたい」ときの地図として使ってください。
 
 > [!IMPORTANT]
-> このページは 2026-08-24 に Figma デザインに合わせて全面的に作り直しました。
-> **以前と違い、`src/content/project/2026.md` は一切読んでいません。**
-> CMS の Projects → 2026 を編集しても、このページは変わりません。
-
-元デザイン： Figma「officialHP_Project説明」
-`https://www.figma.com/design/cfvAO45b0GlmlWLYBWUKqs/of?node-id=1-3`
+> 本文は `src/content/project/{current_year}.md` の `story`（英語）/ `story_ja`（日本語）から読みます。
+> **文章の変更は CMS の Projects → 該当年度から行えます。** コードを触る必要はありません。
 
 ---
 
 ## 目次
 
 1. [対象ファイル](#1-対象ファイル)
-2. [3つの層](#2-3つの層)
+2. [データの流れ](#2-データの流れ)
 3. [文章を変える](#3-文章を変える)
 4. [座標の仕組み](#4-座標の仕組み)
 5. [幾何学模様](#5-幾何学模様)
-6. [画像を差し替える](#6-画像を差し替える)
+6. [イラストを差し替える](#6-イラストを差し替える)
 7. [スマホ表示](#7-スマホ表示)
 8. [ハマりどころ](#8-ハマりどころ)
 9. [目的別：どこを触るか](#9-目的別どこを触るか)
@@ -31,79 +27,98 @@
 
 | 役割 | パス |
 |---|---|
-| **日本語ページ** `/ja/project/` | `src/pages/ja/project/index.astro` |
-| 英語ページ `/project/` | `src/pages/project/index.astro`（**旧レイアウトのまま。未対応**） |
+| 本文の文章（EN / JA） | `src/content/project/{current_year}.md` の `story` / `story_ja` |
+| 本文の型（スキーマ） | `src/content/config.ts` の `projectStory` |
+| CMS の入力欄 | `.pages.yml` の `project` コレクション（`story` / `story_ja`） |
+| レイアウトと見た目（EN / JA 共通） | `src/components/ProjectStory.astro` |
+| 英語ページ `/project/` | `src/pages/project/index.astro` |
+| 日本語ページ `/ja/project/` | `src/pages/ja/project/index.astro` |
+| バッジ・簡易表示の文言 | `src/data/siteCopy.ts` の `projectPage` |
+| イラスト | `public/media/project/art/*.png`（12点） |
 | 幾何学模様 | `public/media/project/*.svg`（8点） |
-| 年号「2026年の活動」 | `src/data/settings.yaml` の `current_year` |
-| フォント読み込み | `src/layouts/BaseLayout.astro` |
+| 年度 | `src/data/settings.yaml` の `current_year` |
 
 > [!NOTE]
-> 紛らわしいページが別にあります。`src/pages/ja/project/2026/index.astro`
-> （URL: `/ja/project/2026/`）はプロジェクトの内容を表示しない別物で、
-> ナビからもフッターからもリンクされていません。この文書の対象外です。
+> 紛らわしいページが別にあります。`src/pages/project/2026/index.astro` と
+> `src/pages/ja/project/2026/index.astro`（URL: `/project/2026/`, `/ja/project/2026/`）は
+> プロジェクトの内容を表示しない別物で、ナビからもフッターからもリンクされていません。
+> この文書の対象外です。
 
 ---
 
-## 2. 3つの層
-
-`src/pages/ja/project/index.astro` は3つに分かれています。
+## 2. データの流れ
 
 ```
---- で囲まれた部分     … 本文（story オブジェクト）とデータの読み込み
-<BaseLayout> 〜        … markup。位置の指定は一切書かない（クラス名だけ）
-<style>                … 見た目と座標。全部ここ
+settings.yaml の current_year
+        ↓
+src/content/project/{current_year}.md  （story / story_ja）
+        ↓
+src/pages/(ja/)project/index.astro     … データを読み、ヘッダー・フッターを組み立てるだけ
+        ↓
+src/components/ProjectStory.astro      … 本文のレイアウトと CSS はすべてここ
 ```
 
-**文章を直すときは `story` だけ、位置を直すときは `<style>` だけ**を触れば済むようにしてあります。
+`ProjectStory.astro` は `locale` を受け取り、英語なら `story`、日本語なら `story_ja` を表示します。
+
+### 本文が無いときは簡易表示になる
+
+`story`（日本語は `story_ja`）が未入力、またはその年度の md が無い場合は、
+タイトル・画像・`summary`・`description`・iGEM Wiki ボタンを並べた**簡易表示**に切り替わります。
+日本語の `*_ja` 項目が空なら英語の値を使います（`docs/ai/coding-rules.md` のローカライズ規約）。
 
 ---
 
 ## 3. 文章を変える
 
-frontmatter の `story` オブジェクトを編集してください。**CMS からは編集できません。**
+CMS の **Projects → 該当年度 → Story (English) / Story (Japanese)**、
+または `src/content/project/{current_year}.md` を直接編集してください。
 
-| `story` のキー | 画面に出る文字 |
+| キー | 画面に出る文字（日本語版の例） |
 |---|---|
-| `badge` | `2026年の活動`（年号は `current_year` から自動） |
-| `intent` | ○○を使って豚を助けたい |
-| `problemHeading` / `problemBody` | 豚が病気でピンチ ＋ 本文 |
-| `butLead` / `resistanceHeading` / `resistanceBody` | しかし、／薬が効かなくなってきた ＋ 本文 |
-| `revealBefore` / `revealWord` / `revealAfter` | そこで、薬に代わるウイルス ／「ファージ」／ を開発しています。 |
-| `phageHeading` / `phageBody` | ファージとは？ ＋ 本文 |
-| `weaknessHeading` / `weaknessBody` | しかし、ファージには弱点がある ＋ 本文 |
+| `intent` | 沖縄の豚を細菌感染症から守る |
+| `problem_heading` / `problem_body` | 豚が細菌感染症でピンチ ＋ 本文 |
+| `but_lead` / `resistance_heading` / `resistance_body` | しかし、／薬が効かなくなってきた ＋ 本文 |
+| `reveal_before` / `reveal_word` / `reveal_after` | そこで、薬に代わるウイルス ／「ファージ」／ を開発しています。 |
+| `phage_heading` / `phage_body` | ファージとは？ ＋ 本文 |
+| `weakness_heading` / `weakness_body` | しかし、ファージには弱点がある ＋ 本文 |
 | `goal` | だから、私たちは「酸に強いファージ」の開発を目指しています |
-| `howHeading` / `howBody` | どうやって開発するの？ ＋ 本文 |
-| `aiHeading` / `aiBody` | 優れたものを探しています ＋ 本文 |
-| `impactHeading` | この開発手法は、豚だけでなく… |
-| `cards` | 地域課題の3枚（ピロリ菌／赤土／サトウキビ） |
+| `how_heading` / `how_body` | どうやって開発するの？ ＋ 本文 |
+| `ai_heading` / `ai_body` | 優れたものを探しています ＋ 本文 |
+| `impact_heading` | この開発手法は、豚だけでなく… |
+| `cards` | 地域課題のカード（ピロリ菌／赤土／サトウキビ）。**表示は先頭3枚まで** |
 | `closing` | この開発手法で沖縄社会の… |
 
-### 配列は「1要素＝1行」です
+バッジの「2026年の活動」/「Project 2026」は `siteCopy.ts` の `projectPage.badgeLabel` で、
+年号は `current_year` から自動で入ります。
 
-```js
-phageBody: ['細菌を攻撃するウイルスです。', '狙った細菌だけをやっつける', 'ことができます。'],
+### 入力した改行がそのまま画面の改行になる
+
+複数行の項目は、YAML の `|-` で書いた改行位置がそのまま `<br>` になります。
+
+```yaml
+phage_body: |-
+  細菌を攻撃するウイルスです。
+  狙った細菌だけをやっつける
+  ことができます。
 ```
 
-これが `<br>` で改行されて表示されます。デザインの改行位置を再現するためです。
-行を増やす・減らすときは配列の要素を足し引きしてください。
-
 > [!WARNING]
-> 文字数を大きく増やすと、PC 表示で**枠からはみ出す**ことがあります。
-> 各ブロックの幅は Figma の値で固定されているためです（例：`width: calc(452 * var(--u))`）。
-> 長くする場合は `<style>` 側の `width` も一緒に広げてください。
+> 行数や1行の文字数を大きく増やすと、PC 表示で**イラストや図形と重なります**。
+> 各ブロックの位置と幅はデザインの座標で固定されているためです（例：`width: calc(452 * var(--u))`）。
+> 既存の行数・文字数を目安にし、長くする場合は `ProjectStory.astro` の `<style>` の `width` / `top` も調整してください。
 
 ---
 
 ## 4. 座標の仕組み
 
-デザインは 1280 × 6820 の絶対配置です。これを崩さずに可変にするため、
+デザインは幅 1280px の絶対配置です。これを崩さずに可変にするため、
 **`--u` という単位**を定義しています。
 
 ```css
-.pj-stage { --u: calc(100cqw / 1280); }   /* 1 デザインpx = var(--u) */
+.pj-stage { --u: calc(100cqw / 1280); }   /* デザイン上の 1px = var(--u) */
 ```
 
-Figma で `x=135, y=744` にある見出しは、そのまま次のように書きます。
+デザイン上で `x=135, y=744` にある見出しは、そのまま次のように書きます。
 
 ```css
 .pj-problem-h {
@@ -115,16 +130,20 @@ Figma で `x=135, y=744` にある見出しは、そのまま次のように書�
 
 - **幅1280px でデザインと1px単位で一致**します
 - それ以外の幅でも比率が保たれます（文字サイズも一緒に縮む）
-- 固定 px を使っていないので `coding-rules.md:46`（固定幅の禁止）にも反しません
+- 固定 px を使っていないので `coding-rules.md`（固定幅の禁止）にも反しません
 
-位置を微調整したいときは、この数字を直接いじってください。
+### 上端の詰め（`--y0`）
+
+デザインの上部にはヘッダーの見本が含まれていたため、その分の空白を `--y0`（150 デザインpx）で
+全体ごと上へ詰めています。ヘッダーとの間隔を変えたいときはこの値を調整してください。
+
+位置を微調整したいときは、`calc(N * var(--u))` の `N` を直接いじってください。
 
 ---
 
 ## 5. 幾何学模様
 
-Figma から書き出した SVG を `public/media/project/` に置いています。
-アセットURLは7日で失効するため、実体をリポジトリに入れてあります。
+デザインから書き出した SVG を `public/media/project/` に置いています。
 
 | ファイル | 中身 | 色 | z-index |
 |---|---|---|:---:|
@@ -135,16 +154,16 @@ Figma から書き出した SVG を `public/media/project/` に置いていま�
 | `blob-mint2.svg` | 下部の塊（回転 -179.09°） | 白 | 8 |
 | `phage-army.svg` | ファージが並ぶ帯 | `#65FFF4` | 7 |
 | `badge.svg` | 「2026年の活動」の下地 | `#3FD1C7` | — |
-| `circle.svg` | 地域課題の丸 ×3 | `#D9D9D9` | — |
+| `circle.svg` | 丸の下地（現在は未使用） | `#D9D9D9` | — |
 
 グラデーション3枚は SVG ではなく CSS で描いています（`.pj-grad-purple` / `.pj-grad-mint` / `.pj-grad-bottom`）。
 
-重ね順は Figma の子要素の並び順をそのまま z-index にしています。
+重ね順はデザインのレイヤー順をそのまま z-index にしています。
 **図形が 1〜9、文章が 10** です。文字が図形の裏に隠れたら z-index を疑ってください。
 
 ### 回転した図形の座標の出し方
 
-Figma の回転図形は「外接ボックスの中央に置いてから回す」構造です。
+回転図形は「外接ボックスの中央に置いてから回す」構造です。
 そのため `left` / `top` に**外接ボックスの座標をそのまま使うとズレます**。
 
 ```
@@ -152,50 +171,31 @@ Figma の回転図形は「外接ボックスの中央に置いてから回す�
 内側の top  = 外接ボックスの top  + (外接ボックスの高さ - 内側の高さ) / 2
 ```
 
-実際にこれで `blob-purple` が 83px / 130px ずれていました。
-
 ---
 
-## 6. 画像を差し替える
+## 6. イラストを差し替える
 
-現在は9箇所すべて**グレーの仮枠**です。中央にサイズが表示されています。
+イラストは `public/media/project/art/` にあり、`ProjectStory.astro` の `art('ファイル名')` で読み込んでいます。
+**同じファイル名で上書きすれば、コードを触らずに差し替えられます。**
 
-| クラス | 位置 (x, y) | サイズ | 隣接する文章 |
-|---|---|---|---|
-| `pj-img-hero` | 785, 216 | 319 × 198 | ○○を使って豚を助けたい |
-| `pj-img-sick` | 632, 807 | 454 × 282 | 豚が病気でピンチ |
-| `pj-img-resist` | 185, 1442 | 413 × 387 （角丸62） | 薬が効かなくなってきた |
-| `pj-img-reveal` | 474, 2306 | 273 × 255 （角丸62） | 「ファージ」 |
-| `pj-img-what` | 551, 2765 | 507 × 203 | ファージとは？ |
-| `pj-img-weak` | 245, 3147 | 315 × 232 | ファージには弱点がある |
-| `pj-img-goal` | 498, 3913 | 273 × 255 （角丸62） | だから、私たちは |
-| `pj-img-how` | 660, 4428 | 439 × 189 | どうやって開発するの？ |
-| `pj-img-ai` | 205, 5008 | 427 × 184 | 優れたものを探しています |
+| クラス | ファイル | 隣接する文章 |
+|---|---|---|
+| `pj-img-hero` | `hero-pig.png` | intent（冒頭） |
+| `pj-img-sick` | `pig-sick.png` | 豚が細菌感染症でピンチ |
+| `pj-img-resist` | `drug-resistant.png` | 薬が効かなくなってきた |
+| `pj-img-reveal` | `phage-reveal.png` | 「ファージ」 |
+| `pj-img-what` | `phage-attack.png` | ファージとは？ |
+| `pj-img-weak` | `stomach-acid.png` | ファージには弱点がある |
+| `pj-img-goal` | `phage-strong.png` | だから、私たちは |
+| `pj-img-how` | `gene-variants.png` | どうやって開発するの？ |
+| `pj-img-ai` | `ai-search.png` | 優れたものを探しています |
+| `pj-circle-1〜3` | `card-pylori.png` / `card-redsoil.png` / `card-sugarcane.png` | 地域課題カード（`cards` の並び順に対応） |
 
-### 手順
+位置とサイズは `<style>` の `.pj-img-*` に入っています。
+縦横比の違う絵に替える場合は、PC 用の `width` / `height` と、
+スマホ用（`@media (max-width: 767px)` 内）の `aspect-ratio` を合わせて直してください。
 
-1. 画像を `public/media/` に置く
-2. markup の該当行を `<img>` に差し替える
-
-```astro
-<!-- 差し替え前 -->
-<div class="pj-img pj-img-hero" aria-hidden="true"><span>319 × 198</span></div>
-
-<!-- 差し替え後 -->
-<img class="pj-img pj-img-hero" src={withBase('media/pig-hero.png')} alt="赤痢病に苦しむ豚" />
-```
-
-**CSS は変更不要です。** 位置・サイズ・角丸はクラスに入っています。
-`alt` は内容を説明する文に変えてください（装飾ではなくなるため `aria-hidden` は外す）。
-
-### Figma に残っていたデザイナーのメモ
-
-| 場所 | メモ |
-|---|---|
-| 薬が効かなくなってきた 付近 | 急に細菌ってワード出てきたのわかりづらいな…。画像も変える |
-| だから、私たちは 付近 | 筋肉ファージの画像にしたい |
-| どうやって開発するの？ 付近 | ２つのファージの変化を見せるイラストにする |
-| 優れたものを探しています 付近 | 大量のファージのイラストと、虫メガネのイラスト |
+イラストは装飾扱い（`alt=""` と `aria-hidden="true"`）です。内容は隣の文章で伝えています。
 
 ---
 
@@ -205,12 +205,10 @@ Figma の回転図形は「外接ボックスの中央に置いてから回す�
 
 | | PC（768px以上） | SP（768px未満） |
 |---|---|---|
-| 配置 | Figma の絶対座標 | DOM の順に縦積み |
-| 見出し | 40px | 30px |
-| 本文 | 20px / 行間40px | 16px / 行間30px |
-| 幅 | 1000px | 335px |
-| 図形 | Figma の位置 | 画面全体の背景として敷く |
-| 地域課題の丸 | 文字の**上**に配置 | 文字の**背面**に半透明で配置 |
+| 配置 | デザインの絶対座標 | markup の順に縦積み |
+| 幅 | 画面幅に比例 | 最大 335px |
+| 図形 | デザインの位置 | 画面全体の背景として敷く |
+| 地域課題の丸 | 文字の**上**に配置 | 文字の**背面**に配置 |
 
 markup の並び順がそのまま SP の表示順になります。
 **要素を追加するときは、読む順番どおりの位置に書いてください。**
@@ -229,32 +227,25 @@ markup の並び順がそのまま SP の表示順になります。
 
 `.pj-stage img { max-width: none; }` で打ち消しています。**消さないでください。**
 
-### ⚠️ Outfit と Inter には日本語がない
+### ⚠️ SP 用の指定には `.pj-stage` を前に付ける
 
-Figma の指定は見出し Outfit・本文 Inter ですが、どちらも日本語グリフを持ちません。
-そのため `BaseLayout.astro` で **Sawarabi Gothic** を追加で読み込み、
-フォントスタックを `'Outfit', 'Sawarabi Gothic', sans-serif` にしています。
+Astro のスコープ CSS では `.pj-stage > *` の詳細度が (0,3,0) になるため、
+単一クラス (0,2,0) で上書きしようとしても**無言で効きません**。
 
-英数字は Outfit / Inter、日本語は Sawarabi Gothic が担当します。
+### ⚠️ `.pj-card` は `display: contents`
 
-なお `だから、私たちは…` の一文だけは Figma で明示的に Sawarabi Gothic 指定なので、
-`.pj-goal` でその順序を入れ替えています。
+カードの子要素は `.pj-stage` の直接の子ではないため、`--y0` の詰めや SP の配置解除を
+`.pj-card > *` にも別途指定しています。片方だけ直すとカード3枚だけがずれます。
+
+### ⚠️ フォントはサイト共通のトークン
+
+見出しは `var(--font-heading)`、本文は `var(--font-body)` を使っています。
+このページだけ別のフォントを足すと他ページと見た目が変わるので避けてください。
 
 ### ⚠️ `container-type` が必要
 
 `--u` は `100cqw`（コンテナ幅）を使っています。2023年以降のブラウザが必要です。
 古いブラウザでは座標が効かず、要素が積み重なって表示されます。
-
-### ⚠️ 仕様書とデザイン本体で数値が違う
-
-Figma 内の仕様書フレーム（node 1:338）と実際のデザインが食い違っています。
-
-| 項目 | 仕様書 | デザイン本体 | 採用 |
-|---|---|---|---|
-| 見出し | 35px | 40px | **40px** |
-| 配色 | EBF3FA / E3EEE2 | 紫・ミント | **デザイン本体** |
-
-余白（デザイン幅1000px、コンテンツ間100px、SP 335px/20px）は仕様書に従っています。
 
 ---
 
@@ -262,14 +253,16 @@ Figma 内の仕様書フレーム（node 1:338）と実際のデザインが食�
 
 | やりたいこと | 触る場所 |
 |---|---|
-| 文章を変える | `index.astro` の `story` オブジェクト |
-| 改行位置を変える | 同上（配列の要素を分割・結合） |
-| 位置を微調整する | `<style>` の `calc(N * var(--u))` の `N` |
-| 画像を入れる | markup の `<div class="pj-img …">` を `<img>` に |
+| 文章を変える | CMS の Projects → 該当年度、または `src/content/project/{year}.md` の `story` / `story_ja` |
+| 改行位置を変える | 同上（入力した改行がそのまま反映される） |
+| 項目を増やす・名前を変える | `src/content/config.ts` の `projectStory` ＋ `.pages.yml` ＋ `ProjectStory.astro` |
+| 位置を微調整する | `ProjectStory.astro` の `<style>` の `calc(N * var(--u))` の `N` |
+| イラストを差し替える | `public/media/project/art/` の同名ファイルを上書き |
 | 図形を差し替える | `public/media/project/*.svg` |
 | 重なりを直す | `z-index`（図形1〜9、文章10） |
-| 年号を変える | `src/data/settings.yaml` の `current_year` |
-| スマホの見え方 | `<style>` 末尾の `@media (max-width: 767px)` |
+| バッジの文言を変える | `src/data/siteCopy.ts` の `projectPage.badgeLabel` |
+| 年度を変える | `src/data/settings.yaml` の `current_year` |
+| スマホの見え方 | `ProjectStory.astro` の `<style>` 末尾の `@media (max-width: 767px)` |
 
 ### 確認方法
 
@@ -277,7 +270,8 @@ Figma 内の仕様書フレーム（node 1:338）と実際のデザインが食�
 npm run dev
 ```
 
-`http://localhost:4321/igem-okinawa/ja/project/`
+- 英語：`http://localhost:4321/igem-okinawa/project/`
+- 日本語：`http://localhost:4321/igem-okinawa/ja/project/`
 
 `/igem-okinawa/` は必須です（省くと 404）。
 
@@ -285,10 +279,4 @@ npm run dev
 
 ## 残っている作業
 
-- [ ] **英語版 `/project/`** が旧レイアウトのまま。英語原稿が必要
-- [ ] 画像9点が仮枠のまま
-- [ ] `/ja/project/2026/` の扱い（放置するか削除するか）を決める
-
----
-
-*この文書は 2026-08-24 時点の実装に基づいています。*
+- [ ] `/project/2026/` と `/ja/project/2026/` の扱い（放置するか削除するか）を決める

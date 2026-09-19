@@ -100,7 +100,7 @@ iGEM Okinawa ホームページのシステム構成、データの流れ、デ�
   … `project/2026/` でのみ使用。文言は `siteCopy.ts` の `hero` / `navCards` から来る
 - **`About.astro` / `Mission.astro`** … 現在どこからも読み込まれていない
 - **`ProjectStory.astro`** … プロジェクトページの本文。`/project/` と `/ja/project/` の
-  両方から使われ、マークアップと CSS（Figma 座標の絶対配置）をここに集約している。
+  両方から使われ、マークアップと CSS（デザイン座標の絶対配置）をここに集約している。
   表示するデータは `src/content/project/{年}.md` の `story` / `story_ja`
 - **`SectionNav.astro`** … `HumanPracticeLayout.astro` からのみ読み込まれるが、
   そのレイアウトを使うページが存在しないため、実質未使用

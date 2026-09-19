@@ -3,8 +3,8 @@
  * ProjectStory
  *
  * プロジェクトページ本文（/project/ と /ja/project/ で共通）。
- * Figma「officialHP_Project説明」 (file cfvAO45b0GlmlWLYBWUKqs / node 1:3) の再現で、
- * Figma の書き出しコード（1280 x 6820 の絶対配置）をそのまま土台にしている。
+ * デザインカンプ「officialHP_Project説明」の再現で、
+ * デザインの書き出しコード（1280 x 6820 の絶対配置）をそのまま土台にしている。
  *
  * 構成:
  *   - 本文 …… src/content/project/{current_year}.md の `story`（EN）/ `story_ja`（JA）
@@ -15,7 +15,7 @@
  * summary / description による簡易表示にフォールバックする。
  *
  * 座標の単位:
- *   --u = 実際の幅 / 1280。Figma の座標 N px を calc(N * var(--u)) と書く。
+ *   --u = 実際の幅 / 1280。デザイン上の座標 N px を calc(N * var(--u)) と書く。
  *   幅 1280px でデザインと 1px 単位で一致し、それ以外の幅でも比率が保たれる。
  *   768px 未満では絶対配置を解除して縦積みに切り替える。
  *
@@ -80,7 +80,7 @@ const art = (name: string) => withBase(`media/project/art/${name}.png`);
 {story ? (
 <main class:list={['pj', isJa && 'pj-ja']}>
   <div class="pj-stage">
-    <!-- ===== 図形（Figma の重ね順どおり） ===== -->
+    <!-- ===== 図形（デザインの重ね順どおり） ===== -->
     <div class="pj-deco pj-grad-purple" aria-hidden="true"></div>
     <img class="pj-deco pj-blob-white" src={deco('blob-white')} alt="" aria-hidden="true" />
     <div class="pj-deco pj-grad-mint" aria-hidden="true"></div>
@@ -259,14 +259,14 @@ const art = (name: string) => withBase(`media/project/art/${name}.png`);
   }
 
   .pj-stage {
-    /* Figma の 1 px = var(--u) */
+    /* デザイン上の 1 px = var(--u) */
     --u: calc(100cqw / 1280);
 
     /* 和文フォントをここで足すと他ページと見た目が変わるため、共通トークンを使う */
     --font-h: var(--font-heading);
     --font-b: var(--font-body);
 
-    /* Figma のフレーム上部 y=-2〜79 にはヘッダー／ナビのモックアップ画像があり、
+    /* デザインの上部 y=-2〜79 にはヘッダー／ナビのモックアップ画像があり、
        実サイトでは本物の Header.astro がその役目を負う。
        モックアップ分の空白が残ると本文がヘッダーから離れすぎるので、
        全体をこの量だけ上へ詰める。数値を変えれば間隔を調整できる。 */
@@ -314,7 +314,7 @@ const art = (name: string) => withBase(`media/project/art/${name}.png`);
   }
 
   /* ==========================================================================
-     図形レイヤー（Figma の子要素順 = z-index 1〜9）
+     図形レイヤー（デザインのレイヤー順 = z-index 1〜9）
      ========================================================================== */
   .pj-deco {
     z-index: 1;
@@ -348,7 +348,7 @@ const art = (name: string) => withBase(`media/project/art/${name}.png`);
     z-index: 3;
   }
 
-  /* 回転する図形は Figma の「外接ボックスの中央に置いてから回す」を再現する。
+  /* 回転する図形は デザインの「外接ボックスの中央に置いてから回す」を再現する。
      したがって left/top は外接ボックスではなく、中央寄せ後の内側の座標。 */
   .pj-blob-purple {
     left: calc(557.221 * var(--u));
@@ -408,7 +408,7 @@ const art = (name: string) => withBase(`media/project/art/${name}.png`);
   }
 
   /* ==========================================================================
-     本文の配置（Figma 座標）
+     本文の配置（デザイン座標）
      ========================================================================== */
   .pj-badge {
     left: calc(202 * var(--u));
@@ -449,7 +449,7 @@ const art = (name: string) => withBase(`media/project/art/${name}.png`);
     z-index: 10;
   }
 
-  /* 見出しが2行に折れないよう Figma の枠幅に合わせる */
+  /* 見出しが2行に折れないよう デザインの枠幅に合わせる */
   .pj-problem-h { left: calc(135 * var(--u)); top: calc(744 * var(--u)); width: calc(457 * var(--u)); }
   .pj-problem-b { left: calc(135 * var(--u)); top: calc(807 * var(--u)); width: calc(491 * var(--u)); }
 
@@ -481,7 +481,7 @@ const art = (name: string) => withBase(`media/project/art/${name}.png`);
   .pj-phage-b { left: calc(245 * var(--u)); top: calc(2828 * var(--u)); width: calc(423 * var(--u)); }
 
   .pj-weakness-h { left: calc(606 * var(--u)); top: calc(3147 * var(--u)); width: calc(452 * var(--u)); }
-  /* Figma は 3258 だが、見出しが2行（日本語の行送りで 119px）になるため本文と 8px 重なる。
+  /* デザインは 3258 だが、見出しが2行（日本語の行送りで 119px）になるため本文と 8px 重なる。
      他セクションと同じくらいの間隔になる位置まで下げている。 */
   .pj-weakness-b { left: calc(606 * var(--u)); top: calc(3272 * var(--u)); width: calc(452 * var(--u)); }
 
@@ -503,7 +503,7 @@ const art = (name: string) => withBase(`media/project/art/${name}.png`);
   .pj-ai-h { left: calc(668 * var(--u)); top: calc(4940 * var(--u)); width: calc(492 * var(--u)); }
   .pj-ai-b { left: calc(680 * var(--u)); top: calc(5008 * var(--u)); width: calc(450 * var(--u)); }
 
-  /* Figma の 5564 から下げている。
+  /* デザインの 5564 から下げている。
      前のセクション（ファージの帯）から離し、直後の3つの課題に寄せることで、
      この一文が課題3枚の導入だと分かるようにするため。
 
@@ -527,7 +527,7 @@ const art = (name: string) => withBase(`media/project/art/${name}.png`);
   }
 
   .pj-img-hero   { left: calc(750 * var(--u)); top: calc(186 * var(--u));  width: calc(361 * var(--u)); height: calc(257 * var(--u)); }
-  /* この絵だけ Figma と縦横比が違うので高さを絵に合わせる */
+  /* この絵だけ デザインと縦横比が違うので高さを絵に合わせる */
   .pj-img-sick   { left: calc(572 * var(--u)); top: calc(757 * var(--u));  width: calc(575 * var(--u)); height: calc(381 * var(--u)); }
   .pj-img-resist { left: calc(133 * var(--u)); top: calc(1260 * var(--u)); width: calc(512 * var(--u)); height: calc(411 * var(--u)); }
   .pj-img-reveal { left: calc(387 * var(--u)); top: calc(2247 * var(--u)); width: calc(489 * var(--u)); height: calc(349 * var(--u)); }
@@ -538,7 +538,7 @@ const art = (name: string) => withBase(`media/project/art/${name}.png`);
   .pj-img-ai     { left: calc(117 * var(--u)); top: calc(4902 * var(--u)); width: calc(560 * var(--u)); height: calc(359 * var(--u)); }
 
   /* --- 地域課題 --------------------------------------------------------- */
-  /* PC ではラッパーを透過させ、3要素が Figma 座標のまま並ぶようにする */
+  /* PC ではラッパーを透過させ、3要素が デザイン座標のまま並ぶようにする */
   .pj-card {
     position: static;
     display: contents;
@@ -582,7 +582,7 @@ const art = (name: string) => withBase(`media/project/art/${name}.png`);
   .pj-card-body-2 { left: calc(541 * var(--u)); width: calc(240 * var(--u)); }
   .pj-card-body-3 { left: calc(818 * var(--u)); width: calc(240 * var(--u)); }
 
-  /* Figma の 6487 から下げている。
+  /* デザインの 6487 から下げている。
      3つの課題を読んでいる最中に画面へ入ってこないよう、意図的に離している。 */
   .pj-closing {
     left: calc(318 * var(--u));
