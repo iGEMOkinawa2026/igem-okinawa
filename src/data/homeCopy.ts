@@ -67,7 +67,7 @@ export const homeCopy = {
     support: {
       title: 'Empower the Next Generation of Scientists',
       body: "iGEM Okinawa's journey is made possible by the generosity of our sponsors and community. Your support directly funds our lab equipment, project development, and entry into the international iGEM competition.",
-      sponsorCtaHref: 'mailto:contact@igem-okinawa.jp',
+      sponsorCtaHref: 'mailto:junho.lee@oist.jp',
       sponsorCtaLabel: 'Become a Sponsor',
       deckHref: '#',
       deckLabel: 'View Sponsorship Deck',
