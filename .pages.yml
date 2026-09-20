@@ -371,6 +371,231 @@ content:
         label: Image
         type: image
         required: false
+      - name: story
+        label: Story (English) - project page body
+        type: object
+        required: false
+        description: >-
+          The body shown on the English project page (/project/). Leave it empty to fall back to
+          a simple layout built from Summary and Description. In multi-line fields, every line
+          break you type becomes a line break on the page. The layout uses fixed coordinates, so
+          adding many lines - or making lines much longer - will overlap the illustrations.
+          Keep close to the current length.
+        fields:
+          - name: intent
+            label: Opening line (main heading)
+            type: string
+            required: false
+            description: Shown at the very top. Keep it to one line.
+          - name: problem_heading
+            label: 1. Problem - heading
+            type: string
+            required: false
+          - name: problem_body
+            label: 1. Problem - body
+            type: text
+            required: false
+          - name: but_lead
+            label: 2. Turn - lead word
+            type: string
+            required: false
+            description: A short connector such as "But".
+          - name: resistance_heading
+            label: 2. Turn - heading
+            type: string
+            required: false
+          - name: resistance_body
+            label: 2. Turn - body
+            type: text
+            required: false
+          - name: reveal_before
+            label: 3. Reveal - text before
+            type: string
+            required: false
+          - name: reveal_word
+            label: 3. Reveal - highlighted word
+            type: string
+            required: false
+            description: Shown very large and bold. Keep it short.
+          - name: reveal_after
+            label: 3. Reveal - text after
+            type: string
+            required: false
+          - name: phage_heading
+            label: 4. Solution - heading
+            type: string
+            required: false
+          - name: phage_body
+            label: 4. Solution - body
+            type: text
+            required: false
+          - name: weakness_heading
+            label: 5. Weakness - heading
+            type: text
+            required: false
+            description: Shown on two lines.
+          - name: weakness_body
+            label: 5. Weakness - body
+            type: text
+            required: false
+          - name: goal
+            label: 6. Goal (centered)
+            type: text
+            required: false
+            description: Centered and large. Three lines works best.
+          - name: how_heading
+            label: 7. Method - heading
+            type: string
+            required: false
+          - name: how_body
+            label: 7. Method - body
+            type: text
+            required: false
+          - name: ai_heading
+            label: 8. AI platform - heading
+            type: string
+            required: false
+          - name: ai_body
+            label: 8. AI platform - body
+            type: text
+            required: false
+          - name: impact_heading
+            label: 9. Lead-in to local challenges
+            type: text
+            required: false
+            description: Introduces the three cards below. Four lines works best.
+          - name: cards
+            label: 9. Local challenge cards
+            type: object
+            list: true
+            required: false
+            description: The challenges listed under the circles. Only the first three are shown.
+            fields:
+              - name: title
+                label: Challenge
+                type: string
+                required: false
+              - name: body
+                label: Description
+                type: text
+                required: false
+          - name: closing
+            label: 10. Closing line
+            type: text
+            required: false
+            description: The last sentence of the page. Three lines works best.
+      - name: story_ja
+        label: Story (Japanese) - 日本語プロジェクトページ本文
+        type: object
+        required: false
+        description: >-
+          日本語のプロジェクトページ（/ja/project/）に表示される本文です。空欄のままにすると、
+          Summary (Japanese) と Description (Japanese) を使った簡易表示に切り替わります。
+          複数行の項目は、改行した位置がそのまま画面上の改行になります。デザインの都合で
+          行数を大きく増やすとイラストや画像に重なるため、いまの行数を目安にしてください。
+        fields:
+          - name: intent
+            label: 導入の一言（大見出し）
+            type: string
+            required: false
+            description: ページ最上部の見出しです。1行で書いてください。
+          - name: problem_heading
+            label: ① 課題の見出し
+            type: string
+            required: false
+          - name: problem_body
+            label: ① 課題の本文
+            type: text
+            required: false
+          - name: but_lead
+            label: ② 転換の一言
+            type: string
+            required: false
+            description: 「しかし、」のような短いつなぎの言葉です。
+          - name: resistance_heading
+            label: ② 転換の見出し
+            type: string
+            required: false
+          - name: resistance_body
+            label: ② 転換の本文
+            type: text
+            required: false
+          - name: reveal_before
+            label: ③ 中央の一言（前）
+            type: string
+            required: false
+          - name: reveal_word
+            label: ③ 中央の強調語
+            type: string
+            required: false
+            description: 大きな太字で表示されます。短くしてください。
+          - name: reveal_after
+            label: ③ 中央の一言（後）
+            type: string
+            required: false
+          - name: phage_heading
+            label: ④ 解決策の見出し
+            type: string
+            required: false
+          - name: phage_body
+            label: ④ 解決策の本文
+            type: text
+            required: false
+          - name: weakness_heading
+            label: ⑤ 弱点の見出し
+            type: text
+            required: false
+            description: 2行で表示されます。
+          - name: weakness_body
+            label: ⑤ 弱点の本文
+            type: text
+            required: false
+          - name: goal
+            label: ⑥ 目標（中央）
+            type: text
+            required: false
+            description: 中央揃えで大きく表示されます。3行が目安です。
+          - name: how_heading
+            label: ⑦ 手法の見出し
+            type: string
+            required: false
+          - name: how_body
+            label: ⑦ 手法の本文
+            type: text
+            required: false
+          - name: ai_heading
+            label: ⑧ AI 活用の見出し
+            type: string
+            required: false
+          - name: ai_body
+            label: ⑧ AI 活用の本文
+            type: text
+            required: false
+          - name: impact_heading
+            label: ⑨ 地域課題への導入文
+            type: text
+            required: false
+            description: 直後の課題カード3枚の導入になる文です。4行が目安です。
+          - name: cards
+            label: ⑨ 地域課題のカード
+            type: object
+            list: true
+            required: false
+            description: 丸いイラストの下に並ぶ課題の紹介です。表示されるのは先頭3件までです。
+            fields:
+              - name: title
+                label: 課題名
+                type: string
+                required: false
+              - name: body
+                label: 説明
+                type: text
+                required: false
+          - name: closing
+            label: ⑩ 締めの一文
+            type: text
+            required: false
+            description: ページ最後の文です。3行が目安です。
 
   - name: members
     label: Team Members

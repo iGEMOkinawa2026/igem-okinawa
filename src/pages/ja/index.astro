@@ -7,6 +7,7 @@ import YAML from 'yaml';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import Mission from '../../components/Mission.astro';
 
 import { siteCopy } from '../../data/siteCopy';
 import { getMainNav } from '../../data/navigation';
@@ -17,11 +18,22 @@ import { getSettings } from '../../lib/settings';
 import socialRaw from '../../data/social.yaml?raw';
 
 import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import iconWet      from '../../assets/icon-wet.png';
 import iconDry      from '../../assets/icon-dry.png';
 import iconHp       from '../../assets/icon-hp.png';
 import iconFunding  from '../../assets/icon-funding.png';
 import iconWiki     from '../../assets/icon-wiki.png';
+import aboutWhat   from '../../assets/about-what.png';
+import aboutWho    from '../../assets/about-who.png';
+import aboutVision from '../../assets/about-vision.png';
+
+/* about.cards[].icon と画像の対応 */
+const aboutIcons: Record<string, ImageMetadata> = {
+  what: aboutWhat,
+  who: aboutWho,
+  vision: aboutVision,
+};
 
 const settings = getSettings();
 const currentYear = settings.current_year;
@@ -77,35 +89,12 @@ const footerLinks = navItems.map((item) => ({
     </section>
 
     <!-- About Section -->
-    <section id="about" class="section section-alt">
-        <div class="container">
-          <div class="section-header text-center">
-            <h2>iGEM Okinawa について</h2>
-            <p class="subtitle">私たちについて</p>
-          </div>
-          <div class="mission-grid">
-            <!-- card1: What is iGEM Okinawa -->
-            <div class="mission-card">
-              <div class="icon">🧬</div>
-              <h3>iGEM Okinawaとは？</h3>
-              <p>合成生物学を用いて社会課題に取り組む沖縄の学生チームです。沖縄の環境に根ざした独自の解決策を開発し、世界へと発信しています。</p>
-            </div>
-            <!-- card2: 参加機関 -->
-            <div class="mission-card">
-              <div class="icon">🏫</div>
-              <h3>3つの参加機関</h3>
-              <p>沖縄工業高等専門学校（KOSEN）、沖縄科学技術大学院大学（OIST）、琉球大学の学生が集まり、多様な専門知識を結集しています。</p>
-            </div>
-            <!-- card3: ビジョン -->
-            <div class="mission-card">
-              <div class="icon">🚀</div>
-              <h3>私たちのビジョン</h3>
-              <p>沖縄の次世代の科学者を育成し、地域の知恵とグローバルなイノベーションを橋渡しすることで、合成生物学を用いた持続可能な未来を築きます。</p>
-            </div>
-
-          </div>
-        </div>
-      </section>
+    <Mission
+      sectionTitle={copy.about.heading}
+      subtitle={copy.about.subtitle}
+      cards={copy.about.cards}
+      icons={aboutIcons}
+    />
 
     <!-- Project Preview -->
     <section class="section">

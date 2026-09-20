@@ -1,0 +1,816 @@
+---
+/**
+ * ProjectStory
+ *
+ * プロジェクトページ本文（/project/ と /ja/project/ で共通）。
+ * デザインカンプ「officialHP_Project説明」の再現で、
+ * デザインの書き出しコード（1280 x 6820 の絶対配置）をそのまま土台にしている。
+ *
+ * 構成:
+ *   - 本文 …… src/content/project/{current_year}.md の `story`（EN）/ `story_ja`（JA）
+ *   - 図形 …… public/media/project/*.svg
+ *   - 見た目 … このファイル末尾の <style>
+ *
+ * 本文が未入力、またはその年度の md が無い場合は、
+ * summary / description による簡易表示にフォールバックする。
+ *
+ * 座標の単位:
+ *   --u = 実際の幅 / 1280。デザイン上の座標 N px を calc(N * var(--u)) と書く。
+ *   幅 1280px でデザインと 1px 単位で一致し、それ以外の幅でも比率が保たれる。
+ *   768px 未満では絶対配置を解除して縦積みに切り替える。
+ *
+ * 注意:
+ *   - 図形の <img> には必ず max-width: none を当てること。
+ *     global.css の img { max-width: 100% } が効くと、1280px を超える図形
+ *     （blob-white 1772px / phage-army 1284px）が幅だけ潰れて歪む。
+ *   - <style> に SP 用の指定を足すときは必ず `.pj-stage` を前に付けること。
+ *     Astro のスコープ CSS で `.pj-stage > *` は詳細度 (0,3,0) になるため、
+ *     単一クラス (0,2,0) の上書きは無言で効かなくなる。
+ */
+import type { CollectionEntry } from 'astro:content';
+
+import { siteCopy, type SiteLocale } from '../data/siteCopy';
+import { withBase } from '../lib/paths';
+
+interface Props {
+  locale: SiteLocale;
+  year: number;
+  project?: CollectionEntry<'project'>['data'];
+}
+
+const { locale, year, project } = Astro.props;
+
+const isJa = locale === 'ja';
+const labels = siteCopy[locale].projectPage;
+const fillYear = (text: string) => text.replace('{year}', String(year));
+
+/* 本文はすべて src/content/project/{current_year}.md から読む。 */
+const story = isJa ? project?.story_ja : project?.story;
+
+/** 改行区切りの文字列を、画面上の行の配列に変換する。 */
+const lines = (value?: string) =>
+  (value ?? '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
+/* レイアウトは3枚ぶんの座標しか持たないため、超過分は表示しない。 */
+const cards = (story?.cards ?? []).slice(0, 3);
+
+/* cards の並び順に対応 */
+const cardArt = ['card-pylori', 'card-redsoil', 'card-sugarcane'];
+
+/* 日本語が未入力なら英語へ落とす（docs/ai/coding-rules.md のローカライズ規約）。 */
+const projectTitle = (isJa ? project?.title_ja || project?.title : project?.title) || '';
+const projectSummary = (isJa ? project?.summary_ja || project?.summary : project?.summary) || '';
+const projectDescription =
+  (isJa ? project?.description_ja || project?.description : project?.description) || '';
+
+const badgeLabel = fillYear(labels.badgeLabel);
+const fallbackTitle = fillYear(labels.fallbackTitle);
+const preparingNotice = fillYear(labels.preparingNotice);
+const imageSrc = project?.image;
+const wikiUrl = project?.wiki_url;
+const archiveHref = withBase(isJa ? 'ja/archive/' : 'archive/');
+
+const deco = (name: string) => withBase(`media/project/${name}.svg`);
+const art = (name: string) => withBase(`media/project/art/${name}.png`);
+---
+
+{story ? (
+<main class:list={['pj', isJa && 'pj-ja']}>
+  <div class="pj-stage">
+    <!-- ===== 図形（デザインの重ね順どおり） ===== -->
+    <div class="pj-deco pj-grad-purple" aria-hidden="true"></div>
+    <img class="pj-deco pj-blob-white" src={deco('blob-white')} alt="" aria-hidden="true" />
+    <div class="pj-deco pj-grad-mint" aria-hidden="true"></div>
+    <img class="pj-deco pj-blob-purple" src={deco('blob-purple')} alt="" aria-hidden="true" />
+    <img class="pj-deco pj-blob-mint" src={deco('blob-mint')} alt="" aria-hidden="true" />
+    <img class="pj-deco pj-blob-hero" src={deco('blob-hero')} alt="" aria-hidden="true" />
+    <img class="pj-deco pj-phages" src={deco('phage-army')} alt="" aria-hidden="true" />
+    <img class="pj-deco pj-blob-mint2" src={deco('blob-mint2')} alt="" aria-hidden="true" />
+    <div class="pj-deco pj-grad-bottom" aria-hidden="true"></div>
+
+    <!-- ===== 本文（src/content/project/{current_year}.md の story / story_ja） ===== -->
+    <p class="pj-badge">
+      <img class="pj-badge-bg" src={deco('badge')} alt="" aria-hidden="true" />
+      <span class="pj-badge-label">{badgeLabel}</span>
+    </p>
+
+    <h1 class="pj-intent">{story.intent}</h1>
+    <img class="pj-img pj-img-hero" src={art('hero-pig')} alt="" aria-hidden="true" />
+
+    <h2 class="pj-h pj-problem-h">{story.problem_heading}</h2>
+    <p class="pj-b pj-problem-b">
+      {lines(story.problem_body).map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </p>
+    <img class="pj-img pj-img-sick" src={art('pig-sick')} alt="" aria-hidden="true" />
+
+    <p class="pj-h pj-but">{story.but_lead}</p>
+    <h2 class="pj-h pj-resistance-h">{story.resistance_heading}</h2>
+    <p class="pj-b pj-resistance-b">{story.resistance_body}</p>
+    <img class="pj-img pj-img-resist" src={art('drug-resistant')} alt="" aria-hidden="true" />
+
+    <p class="pj-h pj-reveal-1">{story.reveal_before}</p>
+    <p class="pj-reveal-word">{story.reveal_word}</p>
+    <p class="pj-h pj-reveal-2">{story.reveal_after}</p>
+    <img class="pj-img pj-img-reveal" src={art('phage-reveal')} alt="" aria-hidden="true" />
+
+    <h2 class="pj-h pj-phage-h">{story.phage_heading}</h2>
+    <p class="pj-b pj-phage-b">
+      {lines(story.phage_body).map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </p>
+    <img class="pj-img pj-img-what" src={art('phage-attack')} alt="" aria-hidden="true" />
+
+    <h2 class="pj-h pj-weakness-h">
+      {lines(story.weakness_heading).map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </h2>
+    <p class="pj-b pj-weakness-b">
+      {lines(story.weakness_body).map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </p>
+    <img class="pj-img pj-img-weak" src={art('stomach-acid')} alt="" aria-hidden="true" />
+
+    <p class="pj-goal">
+      {lines(story.goal).map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </p>
+    <img class="pj-img pj-img-goal" src={art('phage-strong')} alt="" aria-hidden="true" />
+
+    <h2 class="pj-h pj-how-h">{story.how_heading}</h2>
+    <p class="pj-b pj-how-b">
+      {lines(story.how_body).map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </p>
+    <img class="pj-img pj-img-how" src={art('gene-variants')} alt="" aria-hidden="true" />
+
+    <h2 class="pj-h pj-ai-h">{story.ai_heading}</h2>
+    <p class="pj-b pj-ai-b">
+      {lines(story.ai_body).map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </p>
+    <img class="pj-img pj-img-ai" src={art('ai-search')} alt="" aria-hidden="true" />
+
+    <p class="pj-h pj-impact">
+      {lines(story.impact_heading).map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </p>
+
+    {cards.map((card, i) => (
+      <div class:list={['pj-card', `pj-card-${i + 1}`]}>
+        <img
+          class:list={['pj-circle', `pj-circle-${i + 1}`]}
+          src={art(cardArt[i] ?? cardArt[0])}
+          alt=""
+          aria-hidden="true"
+        />
+        <h3 class:list={['pj-card-title', `pj-card-title-${i + 1}`]}>{card.title}</h3>
+        <p class:list={['pj-b', 'pj-card-body', `pj-card-body-${i + 1}`]}>
+          {lines(card.body).map((line, j) => <>{j > 0 && <br />}{line}</>)}
+        </p>
+      </div>
+    ))}
+
+    <p class="pj-h pj-closing">
+      {lines(story.closing).map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </p>
+  </div>
+</main>
+) : (
+<!-- story が未入力、またはその年度の md が無いときの簡易表示 -->
+<main class="section">
+  <div class="container pj-plain">
+    <p class="pj-plain-badge">{badgeLabel}</p>
+    <h1>{projectTitle || fallbackTitle}</h1>
+
+    {imageSrc && (
+      <img class="pj-plain-image" src={withBase(imageSrc)} alt={projectTitle} />
+    )}
+
+    {projectSummary && <p class="pj-plain-lede">{projectSummary}</p>}
+    {projectDescription && <p class="pj-plain-body">{projectDescription}</p>}
+
+    {!projectSummary && !projectDescription && (
+      <p class="pj-plain-lede">
+        {preparingNotice}
+      </p>
+    )}
+
+    <p class="pj-plain-actions">
+      {wikiUrl && (
+        <a class="btn btn-primary" href={wikiUrl} target="_blank" rel="noopener noreferrer">
+          {labels.wikiLabel}
+        </a>
+      )}
+      <a class="btn btn-secondary" href={archiveHref}>{labels.archiveLabel}</a>
+    </p>
+  </div>
+</main>
+)}
+
+<style>
+  /* ==========================================================================
+     簡易表示（story_ja が未入力のとき）
+     ========================================================================== */
+  .pj-plain {
+    max-width: 48rem;
+    text-align: center;
+  }
+
+  .pj-plain-badge {
+    display: inline-block;
+    margin-bottom: 1rem;
+    padding: 0.35rem 1.25rem;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .pj-plain-image {
+    width: 100%;
+    height: auto;
+    margin: 2rem 0;
+    border-radius: var(--border-radius-lg);
+  }
+
+  .pj-plain-lede,
+  .pj-plain-body {
+    margin-top: 1.5rem;
+    text-align: left;
+    white-space: pre-line;
+  }
+
+  .pj-plain-lede {
+    font-weight: 600;
+  }
+
+  .pj-plain-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+  }
+
+  /* ==========================================================================
+     キャンバス
+     ========================================================================== */
+  .pj {
+    container-type: inline-size;
+    width: 100%;
+    overflow-x: clip;
+    background: #fff;
+  }
+
+  .pj-stage {
+    /* デザイン上の 1 px = var(--u) */
+    --u: calc(100cqw / 1280);
+
+    /* 和文フォントをここで足すと他ページと見た目が変わるため、共通トークンを使う */
+    --font-h: var(--font-heading);
+    --font-b: var(--font-body);
+
+    /* デザインの上部 y=-2〜79 にはヘッダー／ナビのモックアップ画像があり、
+       実サイトでは本物の Header.astro がその役目を負う。
+       モックアップ分の空白が残ると本文がヘッダーから離れすぎるので、
+       全体をこの量だけ上へ詰める。数値を変えれば間隔を調整できる。 */
+    --y0: calc(150 * var(--u));
+
+    position: relative;
+    width: 100%;
+    /* 元のデザインは 6820。締めの文を下げた分を足して 7040。 */
+    height: calc(7040 * var(--u) - var(--y0));
+    color: #000;
+  }
+
+  /* .pj-card は display: contents なので、その子は .pj-stage の直接の子ではない。
+     ここで一緒に指定しないと、地域課題の3枚だけ --y0 の分（150px）下にずれる。 */
+  .pj-stage > *,
+  .pj-card > * {
+    position: absolute;
+    margin: 0;
+    /* transform（回転）とは別プロパティなので、回転図形とも競合しない */
+    translate: 0 calc(-1 * var(--y0));
+  }
+
+  /* 図形は必ず max-width を解除する（global.css の img{max-width:100%} 対策） */
+  .pj-stage img {
+    max-width: none;
+    object-fit: fill;
+  }
+
+  /* --- 文字の共通設定 ---------------------------------------------------- */
+  .pj-h {
+    font-family: var(--font-h);
+    font-weight: 400;
+    font-size: calc(40 * var(--u));
+    line-height: normal;
+    z-index: 10;
+  }
+
+  .pj-b {
+    font-family: var(--font-b);
+    font-weight: 400;
+    font-size: calc(20 * var(--u));
+    line-height: calc(40 * var(--u));
+    letter-spacing: calc(0.2 * var(--u));
+    z-index: 10;
+  }
+
+  /* ==========================================================================
+     図形レイヤー（デザインのレイヤー順 = z-index 1〜9）
+     ========================================================================== */
+  .pj-deco {
+    z-index: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .pj-grad-purple {
+    left: 0;
+    top: calc(1928 * var(--u));
+    width: calc(1285 * var(--u));
+    height: calc(2447 * var(--u));
+    background: linear-gradient(171.34deg, rgba(146, 229, 223, 0) 5.75%, rgb(174, 146, 229) 72.85%);
+    z-index: 1;
+  }
+
+  .pj-blob-white {
+    left: calc(-268 * var(--u));
+    top: calc(3426 * var(--u));
+    width: calc(1772 * var(--u));
+    height: calc(1165 * var(--u));
+    z-index: 2;
+  }
+
+  .pj-grad-mint {
+    left: 0;
+    top: calc(4508 * var(--u));
+    width: calc(1285 * var(--u));
+    height: calc(811 * var(--u));
+    background: linear-gradient(180deg, #d4fffc 0%, #65fff4 100%);
+    z-index: 3;
+  }
+
+  /* 回転する図形は デザインの「外接ボックスの中央に置いてから回す」を再現する。
+     したがって left/top は外接ボックスではなく、中央寄せ後の内側の座標。 */
+  .pj-blob-purple {
+    left: calc(557.221 * var(--u));
+    top: calc(1244.962 * var(--u));
+    width: calc(659.373 * var(--u));
+    height: calc(510.526 * var(--u));
+    transform: rotate(-150.25deg);
+    transform-origin: center;
+    z-index: 4;
+  }
+
+  .pj-blob-mint {
+    left: calc(16.254 * var(--u));
+    top: calc(4238.383 * var(--u));
+    width: calc(704.478 * var(--u));
+    height: calc(501.282 * var(--u));
+    transform: rotate(172.17deg);
+    transform-origin: center;
+    z-index: 5;
+  }
+
+  .pj-blob-hero {
+    left: calc(-93 * var(--u));
+    top: calc(662 * var(--u));
+    width: calc(741.935 * var(--u));
+    height: calc(445 * var(--u));
+    z-index: 6;
+  }
+
+  .pj-phages {
+    left: calc(1 * var(--u));
+    top: calc(5047 * var(--u));
+    width: calc(1284 * var(--u));
+    height: calc(485 * var(--u));
+    z-index: 7;
+  }
+
+  .pj-blob-mint2 {
+    left: calc(574.507 * var(--u));
+    top: calc(4832.174 * var(--u));
+    width: calc(658.144 * var(--u));
+    height: calc(449.303 * var(--u));
+    transform: rotate(-179.09deg);
+    transform-origin: center;
+    z-index: 8;
+  }
+
+  /* 締めの文を下げたのに合わせて、下地も 6310 → 6530 へ移動。
+     グラデーションが課題3枚の直後から始まると、そこが区切りに見えてしまうため。 */
+  .pj-grad-bottom {
+    left: calc(1 * var(--u));
+    top: calc(6530 * var(--u));
+    width: calc(1285 * var(--u));
+    height: calc(510 * var(--u));
+    background: linear-gradient(0.2deg, rgb(212, 255, 252) 0.44%, rgba(101, 255, 244, 0) 95.22%);
+    z-index: 9;
+  }
+
+  /* ==========================================================================
+     本文の配置（デザイン座標）
+     ========================================================================== */
+  .pj-badge {
+    left: calc(202 * var(--u));
+    top: calc(216 * var(--u));
+    width: calc(223 * var(--u));
+    height: calc(43 * var(--u));
+    z-index: 10;
+  }
+
+  .pj-badge-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .pj-badge-label {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-h);
+    font-weight: 700;
+    font-size: calc(20 * var(--u));
+    line-height: normal;
+    color: #fff;
+  }
+
+  /* 42px だと 14 文字が 572px に収まらず2行になる */
+  .pj-intent {
+    left: calc(207 * var(--u));
+    top: calc(286 * var(--u));
+    width: calc(572 * var(--u));
+    font-family: var(--font-h);
+    font-weight: 400;
+    font-size: calc(40 * var(--u));
+    line-height: normal;
+    z-index: 10;
+  }
+
+  /* 見出しが2行に折れないよう デザインの枠幅に合わせる */
+  .pj-problem-h { left: calc(135 * var(--u)); top: calc(744 * var(--u)); width: calc(457 * var(--u)); }
+  .pj-problem-b { left: calc(135 * var(--u)); top: calc(807 * var(--u)); width: calc(491 * var(--u)); }
+
+  .pj-but          { left: calc(640 * var(--u)); top: calc(1332 * var(--u)); width: calc(171 * var(--u)); }
+  .pj-resistance-h { left: calc(644 * var(--u)); top: calc(1386.35 * var(--u)); width: calc(452 * var(--u)); }
+  .pj-resistance-b { left: calc(644 * var(--u)); top: calc(1454 * var(--u)); width: calc(452 * var(--u)); }
+
+  .pj-reveal-1,
+  .pj-reveal-2,
+  .pj-reveal-word {
+    width: calc(659 * var(--u));
+    text-align: center;
+    line-height: calc(80 * var(--u));
+    z-index: 10;
+  }
+
+  .pj-reveal-1 { left: calc(277 * var(--u)); top: calc(2023 * var(--u)); }
+  .pj-reveal-2 { left: calc(285 * var(--u)); top: calc(2183 * var(--u)); }
+
+  .pj-reveal-word {
+    left: calc(285 * var(--u));
+    top: calc(2103 * var(--u));
+    font-family: var(--font-h);
+    font-weight: 700;
+    font-size: calc(67 * var(--u));
+  }
+
+  .pj-phage-h { left: calc(244 * var(--u)); top: calc(2765 * var(--u)); width: calc(347 * var(--u)); }
+  .pj-phage-b { left: calc(245 * var(--u)); top: calc(2828 * var(--u)); width: calc(423 * var(--u)); }
+
+  .pj-weakness-h { left: calc(606 * var(--u)); top: calc(3147 * var(--u)); width: calc(452 * var(--u)); }
+  /* デザインは 3258 だが、見出しが2行（日本語の行送りで 119px）になるため本文と 8px 重なる。
+     他セクションと同じくらいの間隔になる位置まで下げている。 */
+  .pj-weakness-b { left: calc(606 * var(--u)); top: calc(3272 * var(--u)); width: calc(452 * var(--u)); }
+
+  .pj-goal {
+    left: calc(300 * var(--u));
+    top: calc(3698 * var(--u));
+    width: calc(659 * var(--u));
+    text-align: center;
+    font-family: var(--font-h);
+    font-weight: 400;
+    font-size: calc(40 * var(--u));
+    line-height: normal;
+    z-index: 10;
+  }
+
+  .pj-how-h { left: calc(207 * var(--u)); top: calc(4338 * var(--u)); width: calc(453 * var(--u)); }
+  .pj-how-b { left: calc(207 * var(--u)); top: calc(4401 * var(--u)); width: calc(497 * var(--u)); }
+
+  .pj-ai-h { left: calc(668 * var(--u)); top: calc(4940 * var(--u)); width: calc(492 * var(--u)); }
+  .pj-ai-b { left: calc(680 * var(--u)); top: calc(5008 * var(--u)); width: calc(450 * var(--u)); }
+
+  /* デザインの 5564 から下げている。
+     前のセクション（ファージの帯）から離し、直後の3つの課題に寄せることで、
+     この一文が課題3枚の導入だと分かるようにするため。
+
+     行間を 56px に固定してブロックの高さを 224px（4行）に確定させ、
+     丸（top 5872）との間隔がちょうど 20px になる位置に置いている。
+     さらに寄せるなら top を大きく、離すなら小さくする。 */
+  .pj-impact {
+    left: calc(320 * var(--u));
+    top: calc(5628 * var(--u));
+    width: calc(656 * var(--u));
+    line-height: calc(56 * var(--u));
+    text-align: center;
+  }
+
+  /* ==========================================================================
+     イラスト（public/media/project/art/*.png）
+     ========================================================================== */
+  .pj-stage .pj-img {
+    object-fit: contain;
+    z-index: 10;
+  }
+
+  .pj-img-hero   { left: calc(750 * var(--u)); top: calc(186 * var(--u));  width: calc(361 * var(--u)); height: calc(257 * var(--u)); }
+  /* この絵だけ デザインと縦横比が違うので高さを絵に合わせる */
+  .pj-img-sick   { left: calc(572 * var(--u)); top: calc(757 * var(--u));  width: calc(575 * var(--u)); height: calc(381 * var(--u)); }
+  .pj-img-resist { left: calc(133 * var(--u)); top: calc(1260 * var(--u)); width: calc(512 * var(--u)); height: calc(411 * var(--u)); }
+  .pj-img-reveal { left: calc(387 * var(--u)); top: calc(2247 * var(--u)); width: calc(489 * var(--u)); height: calc(349 * var(--u)); }
+  .pj-img-what   { left: calc(696 * var(--u)); top: calc(2718 * var(--u)); width: calc(271 * var(--u)); height: calc(300 * var(--u)); }
+  .pj-img-weak   { left: calc(97 * var(--u));  top: calc(2943 * var(--u)); width: calc(684 * var(--u)); height: calc(684 * var(--u)); }
+  .pj-img-goal   { left: calc(425 * var(--u)); top: calc(3918 * var(--u)); width: calc(386 * var(--u)); height: calc(275 * var(--u)); }
+  .pj-img-how    { left: calc(650 * var(--u)); top: calc(4319 * var(--u)); width: calc(376 * var(--u)); height: calc(434 * var(--u)); }
+  .pj-img-ai     { left: calc(117 * var(--u)); top: calc(4902 * var(--u)); width: calc(560 * var(--u)); height: calc(359 * var(--u)); }
+
+  /* --- 地域課題 --------------------------------------------------------- */
+  /* PC ではラッパーを透過させ、3要素が デザイン座標のまま並ぶようにする */
+  .pj-card {
+    position: static;
+    display: contents;
+  }
+
+  /* 丸の枠と背景は画像に含まれる。
+     162px / top 5872 は .pj-impact との間隔を 20px に保つ値。
+     left は各カードの文字の中心（380 / 661 / 938）から半幅を引いている。 */
+  .pj-circle {
+    position: absolute;
+    top: calc(5872 * var(--u));
+    width: calc(164 * var(--u));
+    height: calc(162 * var(--u));
+    object-fit: contain;
+    z-index: 10;
+  }
+
+  .pj-circle-1 { left: calc(298 * var(--u)); }
+  .pj-circle-2 { left: calc(579 * var(--u)); }
+  .pj-circle-3 { left: calc(856 * var(--u)); }
+
+  .pj-card-title {
+    position: absolute;
+    font-family: var(--font-b);
+    font-weight: 400;
+    font-size: calc(20 * var(--u));
+    line-height: calc(40 * var(--u));
+    letter-spacing: calc(0.2 * var(--u));
+    text-decoration: underline;
+    text-underline-position: from-font;
+    z-index: 10;
+  }
+
+  .pj-card-title-1 { left: calc(265 * var(--u)); top: calc(6054 * var(--u)); width: calc(229 * var(--u)); }
+  .pj-card-title-2 { left: calc(548 * var(--u)); top: calc(6054 * var(--u)); width: calc(227 * var(--u)); }
+  .pj-card-title-3 { left: calc(812 * var(--u)); top: calc(6057 * var(--u)); width: calc(252 * var(--u)); }
+
+  .pj-card-body { position: absolute; top: calc(6101 * var(--u)); text-align: center; }
+
+  .pj-card-body-1 { left: calc(258 * var(--u)); width: calc(243 * var(--u)); }
+  .pj-card-body-2 { left: calc(541 * var(--u)); width: calc(240 * var(--u)); }
+  .pj-card-body-3 { left: calc(818 * var(--u)); width: calc(240 * var(--u)); }
+
+  /* デザインの 6487 から下げている。
+     3つの課題を読んでいる最中に画面へ入ってこないよう、意図的に離している。 */
+  .pj-closing {
+    left: calc(318 * var(--u));
+    top: calc(6700 * var(--u));
+    width: calc(686 * var(--u));
+    text-align: center;
+  }
+
+  /* ==========================================================================
+     SP 版（768px 未満）
+     絶対配置を解除して縦積みにする。文字サイズは仕様書の SP 値。
+     ========================================================================== */
+  @media (max-width: 767px) {
+    .pj {
+      background: linear-gradient(180deg, #fff 0%, #efe9fa 30%, #d4fffc 72%, #fff 100%);
+    }
+
+    .pj-stage {
+      width: auto;
+      height: auto;
+      padding: 40px 20px 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+    }
+
+    .pj-stage > * {
+      position: static;
+      left: auto;
+      top: auto;
+      width: 100%;
+      max-width: 335px;
+      height: auto;
+      transform: none;
+      translate: none;
+      text-align: center;
+    }
+
+    /* .pj-card の子は上の .pj-stage > * に含まれないので、ここで PC 用の指定を戻す。
+       left / top を消さないと、PC の絶対座標が position: relative のずれとして残る。
+       translate は .pj-circle の transform: translate(-50%, -50%) とは別プロパティなので競合しない。 */
+    .pj-card > * {
+      left: auto;
+      top: auto;
+      translate: none;
+    }
+
+    /* 図形は消さず、背景として敷いたままにする（文字がこの上に乗る） */
+    .pj-stage .pj-deco {
+      position: absolute;
+      display: block;
+      max-width: none;
+      pointer-events: none;
+    }
+
+    .pj-stage .pj-grad-purple {
+      left: 0;
+      top: 22%;
+      width: 100%;
+      height: 34%;
+    }
+
+    .pj-stage .pj-grad-mint {
+      left: 0;
+      top: 62%;
+      width: 100%;
+      height: 16%;
+    }
+
+    .pj-stage .pj-grad-bottom {
+      left: 0;
+      top: 88%;
+      width: 100%;
+      height: 12%;
+    }
+
+    .pj-stage .pj-blob-white {
+      left: -60%;
+      top: 47%;
+      width: 220%;
+      height: 16%;
+    }
+
+    .pj-stage .pj-blob-purple {
+      left: -30%;
+      top: 13%;
+      width: 150%;
+      height: 10%;
+      transform: rotate(-150.25deg);
+    }
+
+    .pj-stage .pj-blob-mint {
+      left: -25%;
+      top: 58%;
+      width: 150%;
+      height: 9%;
+      transform: rotate(172.17deg);
+    }
+
+    .pj-stage .pj-blob-hero {
+      left: -20%;
+      top: 5%;
+      width: 140%;
+      height: 9%;
+    }
+
+    .pj-stage .pj-blob-mint2 {
+      left: -20%;
+      top: 68%;
+      width: 140%;
+      height: 8%;
+      transform: rotate(-179.09deg);
+    }
+
+    .pj-stage .pj-phages {
+      left: 0;
+      top: 74%;
+      width: 100%;
+      height: 7%;
+    }
+
+    /* イラストは縦積みの中で元の縦横比を保つ */
+    .pj-stage .pj-img {
+      position: static;
+      width: 100%;
+      max-width: 335px;
+      height: auto;
+      margin-block: 8px;
+    }
+
+    .pj-stage .pj-img-hero   { aspect-ratio: 361 / 257; }
+    .pj-stage .pj-img-sick   { aspect-ratio: 575 / 381; }
+    .pj-stage .pj-img-resist { aspect-ratio: 512 / 411; }
+    .pj-stage .pj-img-reveal { aspect-ratio: 489 / 349; }
+    .pj-stage .pj-img-what   { aspect-ratio: 271 / 300; max-width: 220px; }
+    .pj-stage .pj-img-weak   { aspect-ratio: 1 / 1; }
+    .pj-stage .pj-img-goal   { aspect-ratio: 386 / 275; }
+    .pj-stage .pj-img-how    { aspect-ratio: 376 / 434; max-width: 260px; }
+    .pj-stage .pj-img-ai     { aspect-ratio: 560 / 359; }
+
+    /* 地域課題は「丸の上に文字」にする */
+    .pj-stage .pj-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 335px;
+      min-height: 240px;
+      margin-block: 20px;
+    }
+
+    /* 丸は文字の裏に敷く。以前は 240px 指定と 120px 指定が二重にあり、
+       後勝ちで 120px になっていた。その結果を1か所にまとめている。 */
+    .pj-stage .pj-circle {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 150px;
+      height: 148px;
+      max-width: none;
+      transform: translate(-50%, -50%);
+      opacity: 0.35;
+      z-index: 0;
+      margin: 20px 0 0;
+    }
+
+    .pj-stage .pj-card-title,
+    .pj-stage .pj-card-body {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      margin: 0;
+    }
+
+    .pj-stage .pj-card-title {
+      margin-bottom: 4px;
+    }
+
+    .pj-stage .pj-h,
+    .pj-stage .pj-intent,
+    .pj-stage .pj-goal,
+    .pj-stage .pj-reveal-1,
+    .pj-stage .pj-reveal-2 {
+      font-size: 30px;
+      line-height: 40px;
+      margin-top: 20px;
+    }
+
+    .pj-stage .pj-reveal-word {
+      font-size: 44px;
+      line-height: 1.3;
+    }
+
+    .pj-stage .pj-b,
+    .pj-stage .pj-card-title {
+      font-size: 16px;
+      line-height: 30px;
+      letter-spacing: 0.2px;
+    }
+
+    .pj-stage .pj-badge {
+      position: relative;
+      width: 223px;
+      height: 43px;
+      max-width: none;
+    }
+
+    .pj-stage .pj-badge-label {
+      font-size: 20px;
+    }
+
+    /* PC と同じ意図：導入文は課題3枚に寄せ、締めの文は離す */
+    .pj-stage .pj-impact {
+      margin-top: 48px;
+      margin-bottom: 0;
+    }
+
+    /* 導入文の直後にくる1枚目だけ、上の余白を消して密着させる */
+    .pj-stage .pj-impact + .pj-card {
+      margin-top: 0;
+    }
+
+    .pj-stage .pj-closing {
+      margin-top: 72px;
+    }
+  }
+</style>

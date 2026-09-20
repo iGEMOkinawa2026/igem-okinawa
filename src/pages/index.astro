@@ -7,6 +7,7 @@ import YAML from 'yaml';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Mission from '../components/Mission.astro';
 
 import { siteCopy } from '../data/siteCopy';
 import { getMainNav } from '../data/navigation';
@@ -17,11 +18,22 @@ import { getSettings } from '../lib/settings';
 import socialRaw from '../data/social.yaml?raw';
 
 import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import iconWet      from '../assets/icon-wet.png';
 import iconDry      from '../assets/icon-dry.png';
 import iconHp       from '../assets/icon-hp.png';
 import iconFunding  from '../assets/icon-funding.png';
 import iconWiki     from '../assets/icon-wiki.png';
+import aboutWhat   from '../assets/about-what.png';
+import aboutWho    from '../assets/about-who.png';
+import aboutVision from '../assets/about-vision.png';
+
+/* about.cards[].icon と画像の対応 */
+const aboutIcons: Record<string, ImageMetadata> = {
+  what: aboutWhat,
+  who: aboutWho,
+  vision: aboutVision,
+};
 
 const settings = getSettings();
 const currentYear = settings.current_year;
@@ -80,35 +92,12 @@ const footerLinks = navItems.map((item) => ({
     </section>
 
     <!-- About Section -->
-    <section id="about" class="section section-alt">
-      <div class="container">
-        <div class="section-header text-center">
-          <h2>About iGEM Okinawa</h2>
-          <p class="subtitle">Who we are</p>
-        </div>
-        <div class="mission-grid">
-          <!-- card1: What is iGEM Okinawa -->
-          <div class="mission-card">
-            <div class="icon">🧬</div>
-            <h3>What is iGEM Okinawa?</h3>
-            <p>We are a team of students from Okinawa tackling global challenges through synthetic biology, developing solutions rooted in our local environment.</p>
-          </div>
-          <!-- card2: 参加機関 -->
-          <div class="mission-card">
-            <div class="icon">🏫</div>
-            <h3>3 Participating Institutions</h3>
-            <p>Our team brings together diverse talents from National Institute of Technology, Okinawa College (KOSEN), Okinawa Institute of Science and Technology (OIST), and University of the Ryukyus.</p>
-          </div>
-          <!-- card3: ビジョン -->
-          <div class="mission-card">
-            <div class="icon">🚀</div>
-            <h3>Our Vision</h3>
-            <p>To empower the next generation of scientists in Okinawa, bridge local wisdom with global innovation, and build a sustainable future using synthetic biology.</p>
-          </div>
-
-        </div>
-      </div>
-    </section>
+    <Mission
+      sectionTitle={copy.about.heading}
+      subtitle={copy.about.subtitle}
+      cards={copy.about.cards}
+      icons={aboutIcons}
+    />
 
     <!-- Project Preview -->
     <section class="section">
