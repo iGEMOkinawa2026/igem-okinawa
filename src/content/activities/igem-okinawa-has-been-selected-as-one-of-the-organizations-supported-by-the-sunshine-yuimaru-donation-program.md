@@ -36,4 +36,5 @@ description_ja: |-
   いつも私たちの活動を応援してくださる皆さま、本当にありがとうございます！
   引き続き、iGEM Okinawaへの応援をよろしくお願いいたします！
 image: /media/サンシャイン.webp
+order: 1
 ---
