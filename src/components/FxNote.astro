@@ -1,0 +1,103 @@
+---
+/**
+ * 円換算の注記。
+ * fx.live が有効なら、表示時に api_url から当日のレートを取り直し、
+ * ページ内の <EurAmount> と注記の数字を書き換える。
+ * 取得に失敗したときは settings.yaml の値がそのまま残る。
+ */
+import { formatRate, type MoneyLocale } from '../lib/money';
+import type { FxSettings } from '../lib/settings';
+
+interface Props {
+  fx: FxSettings;
+  locale: MoneyLocale;
+}
+
+const { fx, locale } = Astro.props;
+const isJa = locale === 'ja';
+
+const template = isJa
+  ? '円換算は 1 EUR = {rate}（{date} 時点）で計算した目安です。'
+  : 'Yen figures are approximate, converted at 1 EUR = {rate} as of {date}.';
+
+const note = template
+  .replace('{rate}', formatRate(fx.eur_jpy, locale))
+  .replace('{date}', fx.updated);
+
+const sourceLabel = isJa ? 'レートの出典' : 'Rate source';
+---
+
+{fx.eur_jpy > 0 && (
+  <p
+    class="fx-note"
+    data-fx-note
+    data-locale={locale}
+    data-template={template}
+    data-api={fx.live ? fx.api_url : ''}
+  >
+    <span data-fx-text>{note}</span>
+    {fx.source_url && (
+      <>
+        {' '}
+        <a href={fx.source_url} target="_blank" rel="noopener noreferrer">{sourceLabel}</a>
+      </>
+    )}
+  </p>
+)}
+
+<script>
+  const note = document.querySelector<HTMLElement>('[data-fx-note]');
+  const api = note?.dataset.api;
+
+  if (note && api) {
+    const locale = note.dataset.locale === 'ja' ? 'ja-JP' : 'en-US';
+    const yen = new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: 'JPY',
+      maximumFractionDigits: 0,
+    });
+    /* レート自体は小数を残す */
+    const yenRate = new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: 'JPY',
+      maximumFractionDigits: 2,
+    });
+
+    fetch(api)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        const rate = data?.rates?.JPY;
+        const date = data?.date;
+        if (typeof rate !== 'number' || !date) return;
+
+        document.querySelectorAll<HTMLElement>('[data-eur]').forEach((el) => {
+          const eur = Number(el.dataset.eur);
+          const target = el.querySelector<HTMLElement>('[data-eur-jpy]');
+          if (!target || !Number.isFinite(eur)) return;
+
+          /* 目安なので千円単位に丸める。サーバー側の計算と揃えている。 */
+          const value = yen.format(Math.round((eur * rate) / 1000) * 1000);
+          target.textContent =
+            note.dataset.locale === 'ja' ? `（約${value}）` : ` (approx. ${value})`;
+        });
+
+        const text = note.querySelector<HTMLElement>('[data-fx-text]');
+        if (text && note.dataset.template) {
+          text.textContent = note.dataset.template
+            .replace('{rate}', yenRate.format(rate))
+            .replace('{date}', date);
+        }
+      })
+      .catch(() => {
+        /* 取得できなければ settings.yaml の値のままにする */
+      });
+  }
+</script>
+
+<style>
+  .fx-note {
+    margin-top: 1.25rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+</style>

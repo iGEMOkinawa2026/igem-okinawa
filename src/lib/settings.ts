@@ -28,11 +28,36 @@ export interface DonationLocaleSettings {
   bank_transfer?: BankTransferSettings;
 }
 
+export interface FxSettings {
+  /** 1 EUR あたりの円。0 なら円換算を表示しない。取得に失敗したときの表示にも使う。 */
+  eur_jpy: number;
+  updated: string;
+  /** true なら表示時に api_url からその日のレートを取り直す。 */
+  live: boolean;
+  api_url: string;
+  source_url: string;
+  converter_url: string;
+}
+
+export interface FundingCost {
+  label: string;
+  label_ja: string;
+}
+
+export interface FundingSettings {
+  registration_fee_eur: number;
+  participation_fee_eur: number;
+  /** 表示順そのまま */
+  other_costs: FundingCost[];
+}
+
 export interface DonationSettings {
   goal_amount: number;
   current_amount: number;
   currency: 'JPY';
   last_updated: string;
+  fx: FxSettings;
+  funding: FundingSettings;
   ja: DonationLocaleSettings;
   en: DonationLocaleSettings;
 }
@@ -62,11 +87,28 @@ const emptyDonationLocale = (includeBankTransfer: boolean): DonationLocaleSettin
   ...(includeBankTransfer ? { bank_transfer: { ...emptyBankTransfer } } : {}),
 });
 
+const emptyFx: FxSettings = {
+  eur_jpy: 0,
+  updated: '',
+  live: false,
+  api_url: '',
+  source_url: '',
+  converter_url: '',
+};
+
+const emptyFunding: FundingSettings = {
+  registration_fee_eur: 0,
+  participation_fee_eur: 0,
+  other_costs: [],
+};
+
 const emptyDonation: DonationSettings = {
   goal_amount: 0,
   current_amount: 0,
   currency: 'JPY',
   last_updated: '',
+  fx: emptyFx,
+  funding: emptyFunding,
   ja: emptyDonationLocale(true),
   en: emptyDonationLocale(false),
 };
@@ -81,6 +123,12 @@ export function getSettings(): SiteSettings {
         ...emptyDonation,
         ...donation,
         currency: 'JPY',
+        fx: { ...emptyFx, ...donation.fx },
+        funding: {
+          ...emptyFunding,
+          ...donation.funding,
+          other_costs: donation.funding?.other_costs ?? [],
+        },
         ja: {
           ...emptyDonation.ja,
           ...donation.ja,

@@ -6,8 +6,11 @@ import { getCollection } from 'astro:content';
 import PageLayout from '../../../layouts/PageLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
 import Support from '../../../components/Support.astro';
+import DonationSummary from '../../../components/DonationSummary.astro';
 import { withBase } from '../../../lib/paths';
 import { getSettings } from '../../../lib/settings';
+import EurAmount from '../../../components/EurAmount.astro';
+import FxNote from '../../../components/FxNote.astro';
 
 const sponsors = (await getCollection('sponsors')).sort(
   (a, b) => a.data.order - b.data.order,
@@ -15,16 +18,7 @@ const sponsors = (await getCollection('sponsors')).sort(
 const donationPdfPath = withBase('assets/donation/igem-okinawa-fundrasing-guide-ja.pdf');
 const donation = getSettings().donation;
 const donationLocale = donation.ja;
-const progress = donation.goal_amount > 0
-  ? Math.min(100, Math.max(0, (donation.current_amount / donation.goal_amount) * 100))
-  : 0;
-const formatAmount = (amount: number) =>
-  new Intl.NumberFormat('ja-JP', { style: 'currency', currency: donation.currency }).format(amount);
-const detailLinks = [
-  { label: '資金の使い道', href: donationLocale.funding_plan_url },
-  { label: 'お礼・返礼', href: donationLocale.returns_url },
-  { label: '活動・進捗報告', href: donationLocale.updates_url },
-].filter((link) => link.href);
+const { fx, funding } = donation;
 const bankTransfer = donationLocale.bank_transfer;
 const hasBankTransfer = Boolean(
   bankTransfer?.enabled &&
@@ -50,6 +44,19 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
     breadcrumbs={[{ label: 'ホーム', href: withBase('ja/') }]}
   />
 
+  <section class="section donation-summary-section">
+    <div class="container">
+      <DonationSummary
+        locale="ja"
+        raised={donation.current_amount}
+        goal={donation.goal_amount}
+        ctaLabel="銀行振込で寄付する"
+        ctaHref="#bank-transfer"
+        lastUpdated={donation.last_updated}
+      />
+    </div>
+  </section>
+
   <section class="section section-alt">
     <div class="container">
       <div class="support-info-grid">
@@ -65,43 +72,29 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
         <div class="info-card">
           <h3>必要な資金</h3>
           <ul>
-            <li><strong>チーム登録料:</strong> €8,700 EUR</li>
-            <li><strong>参加費:</strong> 1人あたり €575 EUR</li>
-            <li><strong>その他の費用:</strong> 渡航費、宿泊費、実験機材費、アウトリーチ活動費</li>
+            <li><strong>チーム登録料:</strong> <EurAmount amountEur={funding.registration_fee_eur} fx={fx} locale="ja" /></li>
+            <li><strong>参加費:</strong> 1人あたり <EurAmount amountEur={funding.participation_fee_eur} fx={fx} locale="ja" /></li>
+            <li>
+              <strong>その他の費用:</strong>
+              {funding.other_costs.map((cost) => cost.label_ja || cost.label).join('、')}
+            </li>
           </ul>
+          <FxNote fx={fx} locale="ja" />
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section text-center donation-section">
+  <section id="donate" class="section text-center donation-section">
     <div class="container">
       <h2>{donationLocale.title || '寄付によるご支援'}</h2>
       {donationLocale.description && <p class="donation-lede">{donationLocale.description}</p>}
 
-      <div class="donation-progress" aria-label="寄付の進捗">
-        <div class="donation-progress-values">
-          <strong>{formatAmount(donation.current_amount)}</strong>
-          <span>目標 {formatAmount(donation.goal_amount)}</span>
-        </div>
-        <div class="donation-progress-track" role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin="0" aria-valuemax="100" aria-label={`寄付目標の${Math.round(progress)}%を達成`}>
-          <span style={`width: ${progress}%`}></span>
-        </div>
-        <p class="donation-progress-meta">達成率 {Math.round(progress)}%{donation.last_updated && ` · 更新日 ${donation.last_updated}`}</p>
-      </div>
-
-      {detailLinks.length > 0 && (
-        <nav class="donation-context-links" aria-label="寄付に関する情報">
-          {detailLinks.map((link) => (
-            <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
-          ))}
-        </nav>
-      )}
-
       <div class="payment-methods">
-        <div class="payment-method-card payment-method-card-primary">
-          <p class="payment-method-eyebrow">Primary</p>
+        <div id="bank-transfer" class="payment-method">
+          <p class="payment-method-eyebrow">おすすめ</p>
           <h4>銀行振込</h4>
+          <p class="payment-method-lede">iGEM Okinawaの公式口座へ直接お振り込みいただけます。</p>
           {hasBankTransfer && bankTransfer ? (
             <dl class="bank-details">
               <div><dt>銀行名</dt><dd>{bankTransfer.bank_name}</dd></div>
@@ -113,29 +106,20 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
           ) : (
             <p class="payment-status">口座情報などの詳細は準備中です。</p>
           )}
-          {hasBankTransfer && bankTransfer?.note && <p>{bankTransfer.note}</p>}
+          {hasBankTransfer && bankTransfer?.note && <p class="payment-method-note">{bankTransfer.note}</p>}
         </div>
-        <div class="payment-method-card payment-method-card-secondary">
-          <p class="payment-method-eyebrow">Secondary</p>
-          <h4>OIST Donation</h4>
-          {oistDonation?.note && <p>{oistDonation.note}</p>}
+
+        <div class="payment-method">
+          <p class="payment-method-eyebrow payment-method-eyebrow-muted">クレジットカード</p>
+          <h4>OIST寄付フォーム</h4>
+          {oistDonation?.note && <p class="payment-method-note">{oistDonation.note}</p>}
           {!oistDonation && <p class="payment-status">寄付フォームなどの詳細は準備中です。</p>}
           {oistDonation && (
             <a href={oistDonation.url} target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-large">OIST寄付フォームへ</a>
           )}
         </div>
       </div>
-
-      {oistDonation && (
-        <div class="donation-actions">
-          <a href={oistDonation.url} target="_blank" rel="noopener noreferrer" class="btn btn-highlight btn-large">ご支援の手続きをする</a>
-        </div>
-      )}
-
-      {donation.last_updated && (
-        <p class="donation-updated">最終更新日: {donation.last_updated}</p>
-      )}
-      </div>
+    </div>
   </section>
 
   <section class="section section-alt">
@@ -177,8 +161,7 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
   .info-card {
     background: var(--color-bg-base);
     padding: 2rem;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-primary-light);
   }
   .info-card h3 {
     color: var(--color-primary);
@@ -191,79 +174,72 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
   .info-card li {
     margin-bottom: 0.5rem;
   }
+  /* 説明文が未設定でも見出しと決済手段がくっつかないようにする */
+  .donation-section h2 {
+    margin-bottom: 2rem;
+  }
   .donation-lede {
     max-width: 760px;
     margin: 0 auto 2rem;
   }
+  /* Figma どおりヒーローに少し重ねる */
+  .donation-summary-section {
+    position: relative;
+    z-index: 2;
+    margin-top: -1.5rem;
+    padding-top: 0;
+    padding-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+  /* 枠や背景は付けず、余白と見出しだけで2つを分ける */
   .payment-methods {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    max-width: 880px;
+    margin-inline: auto;
+    text-align: center;
+  }
+  @media (min-width: 900px) {
+    .payment-methods { grid-template-columns: 1fr 1fr; gap: 4rem; }
+  }
+  .payment-method {
     display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
   }
-  .payment-method-card {
-    padding: 1.5rem;
-    background: var(--color-bg-alt);
-    border-radius: var(--border-radius-md);
-    flex: 1;
-    min-width: min(250px, 100%);
+  .payment-method h4 {
+    margin: 0;
+    font-size: 1.25rem;
   }
-  .payment-method-card-primary {
-    border: 2px solid var(--color-highlight);
+  .payment-method-lede,
+  .payment-method-note {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+    max-width: 34ch;
   }
-  .payment-method-card-secondary {
-    border: 2px solid var(--color-secondary);
+  .payment-method .btn {
+    margin-top: 1rem;
   }
   .payment-method-eyebrow {
+    margin: 0;
     color: var(--color-highlight);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.08em;
-    text-transform: uppercase;
   }
-  .donation-progress {
-    max-width: 760px;
-    margin: 2rem auto;
-    text-align: left;
+  .payment-method-eyebrow-muted {
+    color: var(--color-text-muted);
   }
-  .donation-progress-values,
-  .donation-progress-meta {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  .donation-progress-track {
-    height: 0.8rem;
-    margin-top: 0.75rem;
-    overflow: hidden;
-    border-radius: 999px;
-    background: var(--color-bg-alt);
-  }
-  .donation-progress-track span {
-    display: block;
-    height: 100%;
-    border-radius: inherit;
-    background: var(--color-highlight);
-  }
-  .donation-progress-meta,
   .donation-updated {
     color: var(--color-text-muted);
     font-size: 0.9rem;
   }
-  .donation-context-links {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin: 2rem auto;
-  }
-  .donation-context-links a {
-    color: var(--color-secondary);
-    font-weight: 600;
-  }
   .bank-details {
-    margin: 1.5rem 0;
+    margin: 1rem auto 0;
+    width: 100%;
+    max-width: 22rem;
     text-align: left;
   }
   .bank-details > div {
@@ -283,18 +259,8 @@ const oistDonation = donationLocale.oist.enabled && donationLocale.oist.url
     font-size: 1.1rem;
     user-select: all;
   }
-  .donation-empty {
-    margin: 2rem 0;
-    color: var(--color-text-muted);
-  }
   .payment-status {
     color: var(--color-text-muted);
-  }
-  .donation-actions {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
   }
   .donation-pdf-viewer {
     width: 100%;
