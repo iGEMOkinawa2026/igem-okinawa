@@ -30,5 +30,4 @@ description_ja: |
 
   これからも地域とのつながりを大切にしながら、沖縄から世界に向けて活動を続けていきます！
 image: /media/image.jpeg
-order: 2
 ---
