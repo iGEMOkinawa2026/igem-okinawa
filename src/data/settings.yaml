@@ -1,9 +1,9 @@
 current_year: 2026
 donation:
   goal_amount: 16000000
-  current_amount: 6739895
+  current_amount: 7175690
   currency: JPY
-  last_updated: 2026-10-28
+  last_updated: 2026-11-26
   fx:
     eur_jpy: 178.75
     updated: 2026-09-17
